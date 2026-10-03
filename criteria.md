@@ -21,13 +21,9 @@ data earns credit; *"80% seemed reasonable"* does not.
 
 ## 1. A matching query completes all three tools
 
-Given a query that matches at least one listing, the agent completes all three
-tool calls and returns a fit card — in at least 4 of 5 tries.
+Given a query that matches at least one listing, the agent completes all three tool calls and returns a fit card — in at least 4 of 5 tries.
 
-**Why this target:**
-<!-- Why 4 of 5 and not 5 of 5? Something about your search, probably —
-     "my search is a plain keyword match and some phrasings will miss" is a
-     real answer. -->
+**Why this target: I chose 4/5 because the search uses keyword matching, so some user queries may not match a listing even when a similar item exists, but the system should still complete the full process most of the time.**
 
 ---
 
@@ -36,27 +32,19 @@ tool calls and returns a fit card — in at least 4 of 5 tries.
 Given a query that matches no listings, the agent stops before calling
 `suggest_outfit` and returns a message naming what to change — 5 of 5 tries.
 
-**Why this target:**
-<!-- Why is 5 of 5 reasonable here when criterion 1 isn't? What's different
-     about this path? -->
+**Why this target: If a query matches no listing, the agent should stop before calling `suggest_outfit` because the system could throw an error if  `suggest_outfit` is called with no data. I chose 5/5 because the system throwing an error means the system will not work correctly  and I need to be sure it isn't happening.**
+
+
 
 ---
 
 ## 3. Something about state
 
-<!-- YOU WRITE THIS ONE.
-
-     How would you know that the item your search found is the same item the
-     next tool received? Name something countable or observable.
-
-     This is the criterion people find hardest, because state failure doesn't
-     look like state failure — it looks like a tool problem. Something that
-     compares session["selected_item"] against what actually reached
-     suggest_outfit is the shape you're after. -->
+Given a query that returns a listing, the id of session["selected_item"] matches the id of what is passed to `suggest_outfit` 5/5 times.
 
 
 
-**Why this target:**
+**Why this target: I chose this target because for the system to work correctly the id of session["selected_item"] needs to match what is sent to `suggest_outfit`. I chose 5/5 because the state passing variables should be consistent rather than failing occasionally.**
 
 
 
@@ -64,20 +52,10 @@ Given a query that matches no listings, the agent stops before calling
 
 ## 4. Something about the fit card
 
-<!-- YOU WRITE THIS ONE.
-
-     The fit card calls a model, so the same input can produce different words
-     each time. That's not a bug — it's the nature of the tool. So what would
-     make it acceptable?
-
-     Think about what you'd actually be unhappy to see. A caption that never
-     mentions the price? Two different items producing the same opening
-     sentence? A card longer than a caption anyone would post? Any of those can
-     be turned into a number. -->
+A fit card should include the name of the item, its price, and its platform, at least once in 4/5 tries.
 
 
-
-**Why this target:**
+**Why this target: I chose this target because the wording of the generated fit card can vary, but it should still contain the important information I chose above about an item. I chose 4/5 because the system should be overall consistent, but generation can miss a detail once and the system can still work fine otherwise.**
 
 
 
@@ -85,16 +63,10 @@ Given a query that matches no listings, the agent stops before calling
 
 ## 5. Your choice
 
-<!-- YOU WRITE THIS ONE TOO.
-
-     Pick something you actually care about getting right. Speed, the empty
-     wardrobe path, what happens when the model can't be reached, whether the
-     search respects a price ceiling — anything, as long as it names a number
-     or an observable outcome. -->
+In 4/5 cases if a query contains a maximum price, every listing returned by `search_listings` is at or below the user's price ceiling.
 
 
-
-**Why this target:**
+**Why this target: If a user gives a price ceiling, the search should be considering that consistently. I chose 4/5, because while it should be consistent, an occasional item above the user's maximum price being returned would not prevent the rest of the system from functioning**
 
 
 
