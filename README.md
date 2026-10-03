@@ -60,7 +60,7 @@
 ### `search_listings`
 
 - **What it does: Searches the listings data for items matching the description, and optionally filters by size and/or price ceiling.**
-- **Inputs: 'description' (str), 'size' (str or None); A requested size matches a complete size component. An "M" would match to "S/M" but an "L" would not match to "XL", 'max_price' (float or None).** <!-- name and type each: `max_price` (float), not "a price" -->
+- **Inputs: 'description' (str), 'size' (str or None); A requested size matches a complete size component. An "M" would match to "S/M" but an "L" would not match to "XL", 'max_price' (float or None).**
 - **Returns: list[dict] a list of matching items from the listings data file. Listings contain an id, title, description, category, style_tags, size, condition, price, colors, brand, and platform.**
 - **When it has nothing: Returns an empty list when no listings match**
 
@@ -121,17 +121,35 @@ $ python app.py ask '...'
 
 ```
 $ python -c "from tools import search_listings; print(search_listings('graphic tee', max_price=30))"
+[{'id': 'lst_002', 'title': 'Y2K Baby Tee — Butterfly Print', 'description': 'Super cute early 2000s baby tee with butterfly graphic. Fitted crop length. Tag says medium but fits like a small.', 'category': 'tops', 'style_tags': ['y2k', 'vintage', 'graphic tee', 'cottagecore'], 'size': 'S/M', 'condition': 'excellent', 'price': 18.0, 'colors': ['white', 'pink', 'purple'], 'brand': None, 'platform': 'depop'}, {'id': 'lst_006', 'title': 'Graphic Tee — 2003 Tour Bootleg Style', 'description': 'Vintage-style bootleg tee with faded graphic. Slightly boxy fit. 100% cotton, soft and worn-in.', 'category': 'tops', 'style_tags': ['graphic tee', 'vintage', 'grunge', 'streetwear', 'band tee'], 'size': 'L', 'condition': 'good', 'price': 24.0, 'colors': ['black'], 'brand': None, 'platform': 'depop'}, {'id': 'lst_017', 'title': 'Mesh Long-Sleeve Top — Black', 'description': 'Sheer black mesh long-sleeve. Great for layering under a graphic tee or over a bralette. Stretchy material, fits true to size.', 'category': 'tops', 'style_tags': ['y2k', 'grunge', 'goth', 'layering'], 'size': 'S/M', 'condition': 'excellent', 'price': 15.0, 'colors': ['black'], 'brand': None, 'platform': 'depop'}, {'id': 'lst_033', 'title': 'Vintage Band Tee — Faded Grey', 'description': 'Faded grey band-style tee with distressed graphic. Crew neck. Fits boxy. Well-loved but no holes or major damage.', 'category': 'tops', 'style_tags': ['vintage', 'grunge', 'band tee', 'graphic tee', 'streetwear'], 'size': 'L', 'condition': 'fair', 'price': 19.0, 'colors': ['grey', 'charcoal'], 'brand': None, 'platform': 'depop'}, {'id': 'lst_015', 'title': 'Vintage Graphic Hoodie — Faded Black', 'description': 'Faded black pullover hoodie with barely-visible vintage graphic on the chest. Cozy interior. Some pilling but adds to the worn-in look.', 'category': 'tops', 'style_tags': ['vintage', 'grunge', 'graphic', 'streetwear'], 'size': 'L', 'condition': 'fair', 'price': 26.0, 'colors': ['black', 'charcoal'], 'brand': None, 'platform': 'depop'}]
 
 ```
 
 ```
-$ python -c "from tools import suggest_outfit; ..."
+$ python -c "from tools import suggest_outfit; from utils.data_loader import get_example_wardrobe, load_listings; print(suggest_outfit(load_listings()[0], get_example_wardrobe()))"
+
+Here are two outfit combinations using the new vintage Levi's 501s and pieces straight from your wardrobe:
+
+### Outfit 1: Casual & Cozy (Effortless Everyday)
+* **Top:** White ribbed tank top
+* **Outerwear:** Oversized grey crewneck sweatshirt
+* **Shoes:** Chunky white sneakers
+* **Accessories:** Black crossbody bag
+* **Why it works:** The straight-leg fit of the 501s balances the oversized, slouchy proportions of the grey crewneck. Layering the sweatshirt over the crisp white tank adds texture and dimension, while the chunky sneakers and black crossbody keep the look sporty, grounded, and practical for daily errands.
+
+### Outfit 2: Edgy Contrast (Cool-Girl Casual)
+* **Top:** White ribbed tank top
+* **Outerwear:** Black cropped zip hoodie (worn open or layered under) OR Vintage black denim jacket
+* **Shoes:** Black combat boots
+* **Accessories:** Brown leather belt
+* **Why it works:** Adding the brown leather belt defines your waist against the medium-wash denim, bringing a touch of polish to the vintage 501s. Pairing them with black combat boots and the black cropped hoodie introduces a tougher, streetwear-inspired edge that contrasts nicely with the classic, all-American feel of the jeans.
 
 ```
 
 ```
-$ python -c "from tools import create_fit_card; ..."
+$ python -c "from tools import create_fit_card; from utils.data_loader import load_listings; print(create_fit_card('jeans and white sneakers', load_listings()[0]))"
 
+Nothing beats the perfect pair of worn-in denim. These vintage Levi's 501 jeans have the best faded knees and look so good with crisp white sneakers for that effortless everyday uniform. Grab them on Depop for just$38 before I change my mind!
 ```
 
 ---

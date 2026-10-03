@@ -20,6 +20,8 @@ That last line is what your loop branches on. "Returns a list" earns nothing —
 the description has to say what is *in* the list.
 """
 
+import re
+
 import config  # noqa: F401 — you'll use this in search_listings
 from generate import generate
 from utils.data_loader import load_listings
@@ -78,8 +80,51 @@ def search_listings(
     Test it from a terminal before you move on:
         python -c "from tools import search_listings; print(search_listings('graphic tee', max_price=30))"
     """
-    # TODO: replace this with your implementation
-    return []
+    listings = load_listings()
+
+    # Filter by price and size
+    filtered = []
+    for listing in listings:
+        if max_price is not None and listing["price"] > max_price:
+            continue
+        if size is not None and not _size_matches(listing["size"], size):
+            continue
+        filtered.append(listing)
+
+    # Score by keyword overlap
+    scored = []
+    query_words = set(description.lower().split())
+    for listing in filtered:
+        score = _score_listing(listing, query_words)
+        if score > 0:
+            scored.append((score, listing))
+
+    # Sort by score descending and return
+    scored.sort(key=lambda x: x[0], reverse=True)
+    return [listing for _, listing in scored[: config.SEARCH_RESULT_LIMIT]]
+
+
+def _size_matches(listing_size: str, requested_size: str) -> bool:
+    """Check if listing_size contains the requested_size token (case-insensitive)."""
+    # Split on non-alphanumeric characters to get tokens
+    tokens = re.split(r"[^a-zA-Z0-9]+", listing_size.strip())
+    requested = requested_size.lower()
+    return any(token.lower() == requested for token in tokens if token)
+
+
+def _score_listing(listing: dict, query_words: set[str]) -> int:
+    """Score a listing by keyword overlap with the query."""
+    # Combine searchable fields
+    searchable = (
+        listing["title"].lower()
+        + " "
+        + listing["description"].lower()
+        + " "
+        + " ".join(listing["style_tags"]).lower()
+    )
+    # Count matching words
+    listing_words = set(searchable.split())
+    return len(query_words & listing_words)
 
 
 # ── Tool 2: suggest_outfit ────────────────────────────────────────────────────
@@ -112,8 +157,36 @@ def suggest_outfit(new_item: dict, wardrobe: dict) -> str:
     Test it from a terminal before you move on:
         python -c "from tools import suggest_outfit; from utils.data_loader import get_example_wardrobe, load_listings; print(suggest_outfit(load_listings()[0], get_example_wardrobe()))"
     """
-    # TODO: replace this with your implementation
-    return ""
+    if not wardrobe["items"]:
+        prompt = f"""I'm thinking about buying this item:
+
+Title: {new_item['title']}
+Description: {new_item['description']}
+Category: {new_item['category']}
+Colors: {', '.join(new_item['colors'])}
+Condition: {new_item['condition']}
+Price: ${new_item['price']} on {new_item['platform']}
+
+I don't have any wardrobe items yet. What are some general styling ideas for this piece? How could I wear it in different contexts?"""
+        return generate(prompt)
+    else:
+        wardrobe_items = "\n".join(
+            f"- {item['name']}" for item in wardrobe["items"]
+        )
+        prompt = f"""I'm considering buying this item:
+
+Title: {new_item['title']}
+Description: {new_item['description']}
+Category: {new_item['category']}
+Colors: {', '.join(new_item['colors'])}
+Condition: {new_item['condition']}
+Price: ${new_item['price']} on {new_item['platform']}
+
+Here are items I already own:
+{wardrobe_items}
+
+Can you suggest 1-2 specific outfit combinations using this new piece with items I already own? Please name the actual pieces from my wardrobe."""
+        return generate(prompt)
 
 
 # ── Tool 3: create_fit_card ───────────────────────────────────────────────────
@@ -152,5 +225,23 @@ def create_fit_card(outfit: str, new_item: dict) -> str:
     Test it from a terminal before you move on:
         python -c "from tools import create_fit_card; from utils.data_loader import load_listings; print(create_fit_card('jeans and white sneakers', load_listings()[0]))"
     """
-    # TODO: replace this with your implementation
-    return ""
+    if not outfit or not outfit.strip():
+        return (
+            "Unable to generate a fit card: the outfit suggestion was empty. "
+            "Try suggest_outfit() with a non-empty wardrobe or broader styling question."
+        )
+
+    prompt = f"""Write a short, natural social media caption for this outfit find.
+
+Item: {new_item['title']}
+Description: {new_item['description']}
+Colors: {', '.join(new_item['colors'])}
+Category: {new_item['category']}
+Condition: {new_item['condition']}
+Price: ${new_item['price']} on {new_item['platform']}
+
+Outfit idea: {outfit}
+
+Write a 2-4 sentence caption like someone would actually post it on social media. Mention the item once, the price once, and the platform once. Make it specific about the vibe and style, not a generic product listing."""
+
+    return generate(prompt)
