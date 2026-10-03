@@ -15,8 +15,9 @@ Build and test your three tools in `tools.py` first. Then come here.
 
 import config
 import trace
+import json
+from generate import generate, ModelUnavailable
 from tools import search_listings, suggest_outfit, create_fit_card
-from generate import ModelUnavailable
 
 
 # ── session state ─────────────────────────────────────────────────────────────
@@ -107,9 +108,75 @@ def run_agent(query: str, wardrobe: dict) -> dict:
     """
     session = new_session(query, wardrobe)
 
-    # TODO: delete these two lines and build the loop.
-    session["error"] = "The planning loop isn't built yet — see the TODO in agent.py."
-    return session
+    count = 0
+    while True:
+        count += 1
+        trace.check_iterations(count)
+
+        # Parse the user's query into search fields.
+        parsed_text = generate(
+            f"""Parse this thrift shopping query into JSON with exactly these
+three keys: description, size, max_price.
+
+Rules:
+- description should describe the item being searched for.
+- size should be a size string if the user specified one, otherwise null.
+- max_price should be a number if the user specified a maximum price,
+  otherwise null.
+- Return only valid JSON, with no markdown or explanation.
+
+Query: {session["query"]}"""
+        )
+
+        parsed = json.loads(parsed_text)
+        session["parsed"] = parsed
+
+        # Search using values stored in session.
+        results = search_listings(
+            session["parsed"]["description"],
+            size=session["parsed"]["size"],
+            max_price=session["parsed"]["max_price"],
+        )
+        session["search_results"] = results
+
+        # Branch: stop if the search found nothing.
+        if not session["search_results"]:
+            description = session["parsed"]["description"]
+            size = session["parsed"]["size"]
+            max_price = session["parsed"]["max_price"]
+
+            changes = [f"a different search than '{description}'"]
+
+            if size is not None:
+                changes.append(f"a different size than {size}")
+
+            if max_price is not None:
+                changes.append(f"a higher price limit than ${max_price:g}")
+
+            session["error"] = (
+                "I couldn't find any listings matching your search. "
+                "Try " + ", ".join(changes) + "."
+            )
+            return session
+
+        # Select the first result and store it in session.
+        session["selected_item"] = session["search_results"][0]
+
+        # Read the selected item back from session.
+        outfit = suggest_outfit(
+            session["selected_item"],
+            session["wardrobe"],
+        )
+        session["outfit_suggestion"] = outfit
+
+        # Read both inputs back from session.
+        fit_card = create_fit_card(
+            session["outfit_suggestion"],
+            session["selected_item"],
+        )
+        session["fit_card"] = fit_card
+
+        return session
 
 
 # ── running it directly ───────────────────────────────────────────────────────
@@ -122,6 +189,7 @@ def _show(session: dict) -> None:
 
     item = session["selected_item"] or {}
     print(f"  found:    {item.get('title')} — ${item.get('price')} on {item.get('platform')}")
+    print(f"  item id:  {item.get('id')}")
     print(f"  outfit:   {session['outfit_suggestion']}")
     print(f"  fit card: {session['fit_card']}")
 
