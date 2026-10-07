@@ -17,7 +17,8 @@ import config
 import trace
 import json
 from generate import generate, ModelUnavailable
-from tools import search_listings, suggest_outfit, create_fit_card
+from tools import suggest_outfit, create_fit_card
+from mcp_client import call_tool
 
 
 # ── session state ─────────────────────────────────────────────────────────────
@@ -132,10 +133,13 @@ Query: {session["query"]}"""
         session["parsed"] = parsed
 
         # Search using values stored in session.
-        results = search_listings(
-            session["parsed"]["description"],
-            size=session["parsed"]["size"],
-            max_price=session["parsed"]["max_price"],
+        results = call_tool(
+            "search_listings",
+            {
+                "description": session["parsed"]["description"],
+                "size": session["parsed"]["size"],
+                "max_price": session["parsed"]["max_price"],
+            },
         )
         session["search_results"] = results
 
