@@ -19,6 +19,7 @@ import json
 from generate import generate, ModelUnavailable
 from tools import suggest_outfit, create_fit_card
 from mcp_client import call_tool
+from trace import step, start_trace, get_trace
 
 
 # ── session state ─────────────────────────────────────────────────────────────
@@ -107,6 +108,7 @@ def run_agent(query: str, wardrobe: dict) -> dict:
       • A handler for ModelUnavailable, so a bad key produces a message rather
         than a stack trace. The import is already at the top of this file.
     """
+    start_trace()
     session = new_session(query, wardrobe)
 
     count = 0
@@ -131,6 +133,11 @@ Query: {session["query"]}"""
 
         parsed = json.loads(parsed_text)
         session["parsed"] = parsed
+        trace.step(
+            "parse_query",
+            inputs={"query": session["query"]},
+            returned=parsed,
+        )   
 
         # Search using values stored in session.
         results = call_tool(
@@ -142,6 +149,15 @@ Query: {session["query"]}"""
             },
         )
         session["search_results"] = results
+        trace.step(
+            "search_listings (via MCP)",
+            inputs={
+                "description": session["parsed"]["description"],
+                "size": session["parsed"]["size"],
+                "max_price": session["parsed"]["max_price"],
+            },
+            returned=results,
+        )
 
         # Branch: stop if the search found nothing.
         if not session["search_results"]:
@@ -161,6 +177,11 @@ Query: {session["query"]}"""
                 "I couldn't find any listings matching your search. "
                 "Try " + ", ".join(changes) + "."
             )
+            trace.step(
+                "empty_search_handler",
+                returned=session["error"],
+                note="branch: empty, stopping",
+            )
             return session
 
         # Select the first result and store it in session.
@@ -172,6 +193,14 @@ Query: {session["query"]}"""
             session["wardrobe"],
         )
         session["outfit_suggestion"] = outfit
+        trace.step(
+            "suggest_outfit",
+            inputs={
+                "new_item": session["selected_item"],
+                "wardrobe": session["wardrobe"],
+            },
+            returned=outfit,
+        )
 
         # Read both inputs back from session.
         fit_card = create_fit_card(
@@ -179,6 +208,14 @@ Query: {session["query"]}"""
             session["selected_item"],
         )
         session["fit_card"] = fit_card
+        trace.step(
+            "create_fit_card",
+            inputs={
+                "outfit": session["outfit_suggestion"],
+                "new_item": session["selected_item"],
+            },
+            returned=fit_card,
+        )
 
         return session
 

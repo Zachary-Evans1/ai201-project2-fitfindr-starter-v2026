@@ -281,13 +281,32 @@ that produced it:
 **Happy path**
 
 ```
-
+[1] parse_query
+      in:  dict with keys: query
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+[3] suggest_outfit
+      in:  dict with keys: new_item, wardrobe
+      out: Here are two outfit combinations using the Y2K butterfly baby tee and pieces you already own:  ### Outfit 1: C…
+[4] create_fit_card
+      in:  dict with keys: outfit, new_item
+      out: Channeling total 2000s pop princess energy with this pastel butterfly baby tee! It’s in amazing condition and …
 ```
 
 **Empty search**
 
 ```
-
+[1] parse_query
+      in:  dict with keys: query
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: [] (empty)
+[3] empty_search_handler
+      out: I couldn't find any listings matching your search. Try a different search than 'futuristic battle armor', a hi…
+      →    branch: empty, stopping
 ```
 
 **On the MCP move:** <!-- what changed in your code, and whether anything
