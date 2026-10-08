@@ -219,19 +219,253 @@ Nothing beats the perfect pair of worn-in denim. These vintage Levi's 501 jeans 
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+| 1. matching query completes | 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET(5/5) | 
+| 2. impossible query stops early | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET(5/5) |
+| 3. selected item state matches outfit input | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET(5/5) |
+| 4. fit card includes item details | 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET(5/5) |
+| 5. price ceiling is respected | 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET(5/5)  |
 
-**Real output from one try**, pasted as text, naming the file and function
+**Real output from one try for each criterion**, pasted as text, naming the file and function
 that produced it:
 
+# Criterion 1:
+
+Source: `agent.py` — `run_agent()`
 ```
+- stopped early: no
+- selected_item: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+- search_results: 10
+
+Outfit suggestion:
 
 ```
 
+Here are 2 outfit combinations using the Y2K Baby Tee and pieces you already own:
+
+### Outfit 1: Casual Y2K Streetwear
+* **Top:** Y2K Baby Tee — Butterfly Print
+* **Bottoms:** Baggy straight-leg jeans (dark wash)
+* **Footwear:** Chunky white sneakers
+* **Outerwear:** Black cropped zip hoodie (worn open or tied around the waist)
+* **Accessories:** Black crossbody bag
+
+**Why it works:** The fitted, cropped silhouette of the baby tee balances out the volume of the baggy, dark wash jeans for a classic early-2000s proportion play. Paired with chunky white sneakers and the black cropped hoodie, it leans effortlessly into the Y2K aesthetic of the shirt. 
+
+### Outfit 2: Elevated Contrast
+* **Top:** Y2K Baby Tee — Butterfly Print
+* **Bottoms:** Wide-leg khaki trousers
+* **Accessories:** Brown leather belt + Black crossbody bag
+* **Footwear:** Black combat boots
+
+**Why it works:** This look plays with high-low styling by mixing the ultra-feminine, playful butterfly tee with more structured, utilitarian pieces. Tucking the baby tee into the wide-leg khaki trousers and cinching it with the brown leather belt defines the waist, while the black combat boots add a cool, grounding edge to the pastel pink and purple graphic.
+```
+
+Fit card:
+
+```
+Channeling major 2000s pop star energy with this butterfly print Y2K baby tee 🦋 Grab it on Depop in excellent condition for just $18! Pair it with baggy jeans for everyday streetwear or dress it down with wide-leg trousers for that effortless high-low mix.
+```
+
+Trace:
+
+```
+[1] parse_query
+      in:  dict with keys: query
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+[3] suggest_outfit
+      in:  dict with keys: new_item, wardrobe
+      out: Here are 2 outfit combinations using the Y2K Baby Tee and pieces you already own:  ### Outfit 1: Casual Y2K St…
+[4] create_fit_card
+      in:  dict with keys: outfit, new_item
+      out: Channeling major 2000s pop star energy with this butterfly print Y2K baby tee 🦋 Grab it on Depop in excellent …
+```
+```
+# Criterion 2:
+Source: `agent.py` — `run_agent()`
+```
+
+- stopped early: yes — I couldn't find any listings matching your search. Try a different search than 'designer ballgown', a different size than XXS, a higher price limit than $5.
+- selected_item: (none)
+- search_results: 0
+
+Trace:
+
+```
+[1] parse_query
+      in:  dict with keys: query
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: [] (empty)
+[3] empty_search_handler
+      out: I couldn't find any listings matching your search. Try a different search than 'designer ballgown', a differen…
+      →    branch: empty, stopping
+```
+```
+
+# Criterion 3:
+Source: `agent.py` — `run_agent()`
+```
+
+- stopped early: no
+- selected_item: Denim Jacket — Light Wash, Cropped ($42.0, poshmark)
+- search_results: 6
+
+Outfit suggestion:
+
+```
+Here are two outfit combinations using the new light wash cropped denim jacket and pieces you already own:
+
+**Outfit 1: High-Contrast Casual**
+*   **Top:** White ribbed tank top
+*   **Bottom:** Baggy straight-leg jeans (dark wash)
+*   **Outerwear:** Denim Jacket — Light Wash, Cropped
+*   **Shoes:** Chunky white sneakers
+*   **Accessories:** Black crossbody bag
+*   *Why it works:* This creates a cool "double denim" look with intentional contrast. The dark wash jeans ground the outfit, while the light wash cropped jacket and white tank keep the top half bright and balanced. The chunky sneakers and crossbody bag add a relaxed, modern streetwear vibe.
+
+**Outfit 2: Smart-Casual Mix**
+*   **Top:** White ribbed tank top (worn layered under) + Oversized grey crewneck sweatshirt (worn draped over the shoulders or layered underneath depending on the fit)
+*   **Bottom:** Wide-leg khaki trousers
+*   **Outerwear:** Denim Jacket — Light Wash, Cropped
+*   **Shoes:** Black combat boots
+*   **Accessories:** Brown leather belt
+*   *Why it works:* Pairing the structured, light wash denim with tailored khaki trousers creates a great high-low mix. Tucking the white tank in with the brown leather belt adds definition at the waist, and the cropped length of the jacket pairs naturally with high-waisted wide-leg pants. Finish with black combat boots to add a little edge to the polished trousers.
+```
+
+Fit card:
+
+```
+The ultimate blank canvas jacket just dropped on Poshmark for $42 and I'm obsessed with the structured shoulders. Thinking of styling it for double denim or dressing it down with some wide-leg trousers for that effortless high-low mix. Such a good find for transitional weather!
+```
+
+Trace:
+
+```
+[1] parse_query
+      in:  dict with keys: query
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: 6 items: Denim Jacket — Light Wash, Cropped, Vintage Levi's 501 Jeans — Medium Wash, 90s Track Jacket — Navy/White Stripe … +3 more
+[3] suggest_outfit
+      in:  dict with keys: new_item, wardrobe
+      out: Here are two outfit combinations using the new light wash cropped denim jacket and pieces you already own:  **…
+[4] create_fit_card
+      in:  dict with keys: outfit, new_item
+      out: The ultimate blank canvas jacket just dropped on Poshmark for $42 and I'm obsessed with the structured shoulde…
+```
+```
+
+# Criterion 4:
+Source: `agent.py` — `run_agent()`
+```
+
+- stopped early: no
+- selected_item: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+- search_results: 10
+
+Outfit suggestion:
+
+```
+Here are two specific outfit combinations using the Y2K Butterfly Baby Tee and pieces you already own:
+
+**Outfit 1: Casual 90s Streetwear**
+*   **Top:** Y2K Butterfly Baby Tee
+*   **Bottoms:** Baggy straight-leg jeans (dark wash)
+*   **Layer:** Vintage black denim jacket
+*   **Footwear:** Chunky white sneakers
+*   **Accessories:** Black crossbody bag
+*   *Why it works:* This plays on the classic Y2K silhouette of a fitted top paired with baggy, relaxed bottoms. The black denim jacket ties in the grunge/vintage edge, while the chunky white sneakers and crossbody bag keep it casual and practical for everyday wear.
+
+**Outfit 2: Elevated Retro-Casual**
+*   **Top:** Y2K Butterfly Baby Tee
+*   **Bottoms:** Wide-leg khaki trousers
+*   **Accessories:** Brown leather belt, Black crossbody bag
+*   **Footwear:** Black combat boots
+*   *Why it works:* Tucking the baby tee into the wide-leg khakis creates a balanced, waist-defining shape. Adding the brown leather belt and grounding the outfit with black combat boots gives it a cool, slightly subversive contrast to the sweet, feminine butterfly graphic.
+```
+
+Fit card:
+
+```
+Obsessed with this Y2K butterfly baby tee—the pink and purple print is just too good. ✨ I'm listing it on Depop for $18, and it’s giving major early 2000s streetwear vibes whether you style it with baggy denim or cool utility trousers. Grab it before it's gone! 🦋
+```
+
+Trace:
+
+```
+[1] parse_query
+      in:  dict with keys: query
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+[3] suggest_outfit
+      in:  dict with keys: new_item, wardrobe
+      out: Here are two specific outfit combinations using the Y2K Butterfly Baby Tee and pieces you already own:  **Outf…
+[4] create_fit_card
+      in:  dict with keys: outfit, new_item
+      out: Obsessed with this Y2K butterfly baby tee—the pink and purple print is just too good. ✨ I'm listing it on Depo…
+```
+```
+
+# Criterion 5:
+Source: `agent.py` — `run_agent()`
+```
+
+- stopped early: no
+- selected_item: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+- search_results: 10
+
+Outfit suggestion:
+
+```
+Here are two specific outfit combinations using the Y2K baby tee and pieces from your current wardrobe:
+
+**Outfit 1: Casual Y2K Streetwear**
+*   **Top:** Y2K Baby Tee — Butterfly Print
+*   **Bottoms:** Baggy straight-leg jeans (dark wash)
+*   **Layer:** Black cropped zip hoodie
+*   **Shoes:** Chunky white sneakers
+*   **Accessories:** Black crossbody bag
+*   **Why it works:** The fitted, cropped silhouette of the baby tee balances out the volume of the baggy dark wash jeans. Throwing the black cropped zip hoodie over top keeps it warm while maintaining that quintessential early 2000s proportion, and the chunky white sneakers tie the casual look together.
+
+**Outfit 2: Elevated Retro Casual**
+*   **Top:** Y2K Baby Tee — Butterfly Print
+*   **Bottoms:** Wide-leg khaki trousers
+*   **Belt:** Brown leather belt
+*   **Shoes:** Black combat boots
+*   **Layer:** Vintage black denim jacket (optional for cooler weather)
+*   **Why it works:** This pairs the ultra-feminine, fitted pink and purple butterfly graphic with the more tailored, structured wide-leg khaki trousers. Tucking the tee in and adding the brown leather belt pulls the waistline together, while the black combat boots add a bit of edge to ground the sweetness of the top.
+```
+
+Fit card:
+
+```
+Total butterfly era obsession over this Y2K baby tee! It’s giving major early 2000s streetwear vibes, especially paired with baggy denim or wide-leg trousers. Grab it on depop for just $18 before I change my mind and keep it in my own closet. ✨🦋
+```
+
+Trace:
+
+```
+[1] parse_query
+      in:  dict with keys: query
+      out: dict with keys: description, size, max_price
+[2] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+[3] suggest_outfit
+      in:  dict with keys: new_item, wardrobe
+      out: Here are two specific outfit combinations using the Y2K baby tee and pieces from your current wardrobe:  **Out…
+[4] create_fit_card
+      in:  dict with keys: outfit, new_item
+      out: Total butterfly era obsession over this Y2K baby tee! It’s giving major early 2000s streetwear vibes, especial…
+```
+```
 ---
 
 ## Verdicts and Diagnoses
