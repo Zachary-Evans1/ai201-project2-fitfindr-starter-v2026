@@ -188,18 +188,24 @@ Query: {session["query"]}"""
         session["selected_item"] = session["search_results"][0]
 
         # Read the selected item back from session.
+        selected_id = session["selected_item"].get("id")
+        new_item = session["selected_item"]
+        new_item_id = new_item.get("id")
         outfit = suggest_outfit(
-            session["selected_item"],
+            new_item,
             session["wardrobe"],
         )
         session["outfit_suggestion"] = outfit
+        
         trace.step(
             "suggest_outfit",
             inputs={
+                "selected_item_id": selected_id,
                 "new_item": session["selected_item"],
                 "wardrobe": session["wardrobe"],
             },
             returned=outfit,
+            note=f"ID check: selected_item={selected_id}, new_item={new_item_id}",
         )
 
         # Read both inputs back from session.

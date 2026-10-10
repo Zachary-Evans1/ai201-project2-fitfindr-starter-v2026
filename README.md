@@ -559,21 +559,21 @@ full. -->
 
      `python run_eval.py --label after` -->
 
-**What I changed:**
+**What I changed: I added a new_item_id field to the suggest outfit trace.**
 
-**Which failure it was meant to fix:**
+**Which failure it was meant to fix: While I believe criterion 3 is met,it is difficult to verify directly from the evaluation evidence. The new trace information will make it easier to check whether the two IDs match.**
 
 ### Run Log — After
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+| 1. matching query completes | 4/5  | PASS | PASS | PASS | PASS | PASS | MET(5/5) |
+| 2. impossible query stops early | 5/5 | PASS | PASS | PASS | PASS | PASS | MET(5/5) |
+| 3. selected item state matches outfit input | 5/5  | PASS | PASS | PASS | PASS | PASS | MET(5/5) |
+| 4. fit card includes item details | 4/5 | PASS | PASS | PASS | PASS | PASS | MET(5/5) |
+| 5. price ceiling is respected | 4/5 | PASS | PASS | PASS | PASS | PASS | MET(5/5) |
 
-**Did it help, and how do I know:**
+**Did it help, and how do I know: My changed did help, it made it much easier to verify Criteria 3. I know because in each try the trace now contains this line: `ID check: selected_item=lst_002, new_item=lst_002` which shows if the selected item and the new item have the same ID.**
 
 <!-- If it made things worse, say that. Honestly reported, that earns full
      credit and is more interesting than one that worked. -->
