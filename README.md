@@ -199,6 +199,12 @@ Nothing beats the perfect pair of worn-in denim. These vintage Levi's 501 jeans 
 - *What came back: Claude helped me figure out that the size check should compare complete size components rather than using a substring match.*
 - *What I changed: With Claude's help, I implemented `search_listings` with the `_size_matches` helper function that used size tokens to split on non-alphanumeric characters and compare those tokens to the requested size. I then tested both `M` and `L` searches to make sure the filtering worked as intended*
 
+**Moment 3 - Unit 4**
+
+- *What I asked for: I asked Claude to implement a way to track the ID of the item saved in the session state to be able to better verify Criteria 3.*
+- *What came back: Claude gave me a implementation that changed a few lines in agent.py to track the ID of the item in the session state.*
+- *What I changed: In Claude's implementation, it did not compare the new item's ID to the selected item's ID, it used the selected item's ID twice for both values. I added some lines of code to retrieve the new item's ID separately so the trace could display both IDs for comparison.*
+
 <!-- ═══════════════════════ UNIT 4 — THE TEST ═══════════════════════
 
      Don't fill these in during unit 3.
@@ -496,7 +502,7 @@ Trace:
 
 **Diagnoses**
 
-All criteria were met, so I don't have anything to diagnose.
+All criteria were met, so I don't have anything to diagnose. However, I think Criterion 1, matching query completes, may have set the target too low. For a future project I might tighten the target to 5/5 to require consistent completion on every valid try.
 
 ---
 
@@ -548,8 +554,24 @@ behaved differently afterwards. If the rewire didn't work, say exactly where it
 broke — the error text and the last thing that worked. That earns the point in
 full. -->
 
+First I registered the function with @mcp.tool() and added a description explaining its inputs and what it returns when no listings match.
 
+After that in agent.py, I replaced:
+`results = search_listings(
+      session["parsed"]["description"],
+      size=session["parsed"]["size"],
+      max_price=session["parsed"]["max_price"],
 
+With:
+results = call_tool(
+      "search_listings",
+      {
+            "description": session["parsed"]["description"],
+            "size": session["parsed"]["size"],
+            "max_price": session["parsed"]["max_price"],
+      },
+
+It worked the exact same afterwards, although at first it didn't work because I forgot to uncomment the `return _search_listings_impl(description, size, max_price)` line in `mcp_server.py.`
 ---
 
 ## The Improvement
@@ -588,7 +610,7 @@ full. -->
      you did. "I ran out of time" is fine if it's true. Pretending nothing is
      left is not. -->
 
-
+Nothing! Every Criteria is passing! For Criteria 3, you still have to manually check the ID's instead of an automatic system, but I didn't want to edit more files than I had to. It works fine as is, it just takes longer to check.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
@@ -607,18 +629,18 @@ full. -->
 
      SUBMISSION CHECKLIST — unit 4
 
-       [ ] mcp_server.py exists with one tool registered
+       [✅] mcp_server.py exists with one tool registered
            (or a written record of exactly where the rewire broke)
-       [ ] Run Log — Before, five criteria, five tries each
-       [ ] Real output pasted underneath, naming file and function
-       [ ] A verdict on every criterion
-       [ ] A diagnosis for every miss, naming a place AND a mechanism
-       [ ] Loop Trace, with the MCP call visible in it
-       [ ] All three failure modes triggered and handled
-       [ ] One improvement, with Run Log — After in the same format
-       [ ] What's Still Broken
-       [ ] At least four new commits
-       [ ] The SAME repository URL as last unit
+       [✅] Run Log — Before, five criteria, five tries each
+       [✅] Real output pasted underneath, naming file and function
+       [✅] A verdict on every criterion
+       [✅] A diagnosis for every miss, naming a place AND a mechanism
+       [✅] Loop Trace, with the MCP call visible in it
+       [✅] All three failure modes triggered and handled
+       [✅] One improvement, with Run Log — After in the same format
+       [✅] What's Still Broken
+       [✅] At least four new commits
+       [✅] The SAME repository URL as last unit
 
      Do not delete and recreate this repository. Your commit history is what
      shows your criteria existed before your results did.
