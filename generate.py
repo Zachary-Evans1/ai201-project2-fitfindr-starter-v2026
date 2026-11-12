@@ -365,8 +365,22 @@ def generate(
                 or "rate" in message and "limit" in message
             )
             if not rate_limited:
+                runlog.event(
+                    "model_call",
+                    cache_hit=False,
+                    ok=False,
+                    attempt=attempt + 1,
+                    ms=runlog.ms_since(attempt_t0),
+                    error=type(exc).__name__,
+                )
                 raise ModelUnavailable(_explain(exc)) from exc
             backoff = _retry_delay(exc, attempt)
+            runlog.event(
+                "model_retry",
+                attempt=attempt + 1,
+                backoff_s=round(backoff, 1),
+                ms=runlog.ms_since(attempt_t0),
+            )
             print(
                 f"  [rate limit] service pushed back. Waiting {backoff:.0f}s "
                 f"(attempt {attempt + 1} of {config.MAX_RETRIES}). This is "
@@ -376,6 +390,7 @@ def generate(
             )
             time.sleep(backoff)
 
+    runlog.event("model_call", cache_hit=False, ok=False, error="RateLimitExhausted")
     raise RuntimeError(
         f"Still rate limited after {config.MAX_RETRIES} attempts. Wait a "
         f"minute and try again — your key is fine.\nLast error: {last_error}"
