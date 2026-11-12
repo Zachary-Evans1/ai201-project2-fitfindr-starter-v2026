@@ -234,7 +234,7 @@ Nothing beats the perfect pair of worn-in denim. These vintage Levi's 501 jeans 
 **Real output from one try for each criterion**, pasted as text, naming the file and function
 that produced it:
 
-# Criterion 1:
+## Criterion 1:
 
 Source: `agent.py` — `run_agent()`
 ```
@@ -289,7 +289,7 @@ Trace:
       out: Channeling major 2000s pop star energy with this butterfly print Y2K baby tee 🦋 Grab it on Depop in excellent …
 ```
 ```
-# Criterion 2:
+## Criterion 2:
 Source: `agent.py` — `run_agent()`
 ```
 
@@ -312,7 +312,7 @@ Trace:
 ```
 ```
 
-# Criterion 3:
+## Criterion 3:
 Source: `agent.py` — `run_agent()`
 ```
 
@@ -366,7 +366,7 @@ Trace:
 ```
 ```
 
-# Criterion 4:
+## Criterion 4:
 Source: `agent.py` — `run_agent()`
 ```
 
@@ -419,7 +419,7 @@ Trace:
 ```
 ```
 
-# Criterion 5:
+## Criterion 5:
 Source: `agent.py` — `run_agent()`
 ```
 
@@ -612,39 +612,30 @@ It worked the exact same afterwards, although at first it didn't work because I 
 
 Nothing! Every Criteria is passing! For Criteria 3, you still have to manually check the ID's instead of an automatic system, but I didn't want to edit more files than I had to. It works fine as is, it just takes longer to check.
 
-<!-- ═════════════════════════════════════════════════════════════════════
+---
 
-     SUBMISSION CHECKLIST — unit 3
+# Capstone Project (Unit 9)
 
-       [ ] criteria.md has five numbered criteria, each with a target
-       [ ] Each criterion has a reason underneath it
-       [ ] All five unit 3 sections above have real content
-       [ ] Tool Inventory: all three tools, inputs WITH TYPES, a specific
-           return value, and the empty case
-       [ ] Planning Loop names the branch rule and agent.py::run_agent
-       [ ] Sample Run: one full query plus the three per-tool tests, as text
-       [ ] At least four new commits
-       [ ] Repository URL submitted — WRITE IT DOWN, you submit the same one
-           next unit
+**The System: FitFindr**
 
-     SUBMISSION CHECKLIST — unit 4
+## The Shape
 
-       [✅] mcp_server.py exists with one tool registered
-           (or a written record of exactly where the rewire broke)
-       [✅] Run Log — Before, five criteria, five tries each
-       [✅] Real output pasted underneath, naming file and function
-       [✅] A verdict on every criterion
-       [✅] A diagnosis for every miss, naming a place AND a mechanism
-       [✅] Loop Trace, with the MCP call visible in it
-       [✅] All three failure modes triggered and handled
-       [✅] One improvement, with Run Log — After in the same format
-       [✅] What's Still Broken
-       [✅] At least four new commits
-       [✅] The SAME repository URL as last unit
+**Chosen Shape: A (Deploy and instrument)**
 
-     Do not delete and recreate this repository. Your commit history is what
-     shows your criteria existed before your results did.
-     ═════════════════════════════════════════════════════════════════════ -->
+**Chosen Path: A (Hosted))**
+
+**What I'm Adding**
+
+I am deploying FitFinder to a Render URL that is started with `gunicorn serve:app`. I'm adding a structured run log as well: one JSON line per event, written for every HTTP request, every agent run, every model call, and every MCP tool call. Each line will include a run ID, the request, whether the request went through and timing.
+
+**What's out of Scope**
+
+- I'm not adding a new tool, a second search strategy, or any other capability.
+- I'm not hardening the model-outage or rate-limit paths. The existing `ModelUnavailable` handling and retry loop in `generate.py` stay as they are.
+- I'm not adding a database or a hosted log service, logs are staying as JSON lines in a file, and I will copy the lines into this README by hand.
+- I'm not changing the branch rule in `agent.py::run_agent` or any of the existing five criteria in `criteria.md`. I will add five more criteria in `criteria.md` though.
+
+
 
 ---
 
