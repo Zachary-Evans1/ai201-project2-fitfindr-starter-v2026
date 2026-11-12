@@ -16,6 +16,7 @@ Build and test your three tools in `tools.py` first. Then come here.
 import config
 import trace
 import json
+import runlog
 from generate import generate, ModelUnavailable
 from tools import suggest_outfit, create_fit_card
 from mcp_client import call_tool
@@ -109,6 +110,8 @@ def run_agent(query: str, wardrobe: dict) -> dict:
         than a stack trace. The import is already at the top of this file.
     """
     start_trace()
+    runlog.start_run()
+    runlog.event("run_start", query=query)
     session = new_session(query, wardrobe)
 
     count = 0
@@ -182,6 +185,11 @@ Query: {session["query"]}"""
                 returned=session["error"],
                 note="branch: empty, stopping",
             )
+            runlog.event(
+                "run_end",
+                outcome="stopped_no_results",
+                ms=runlog.run_ms(),
+            )
             return session
 
         # Select the first result and store it in session.
@@ -223,6 +231,12 @@ Query: {session["query"]}"""
             returned=fit_card,
         )
 
+        runlog.event(
+            "run_end",
+            outcome="completed",
+            ms=runlog.run_ms(),
+            has_fit_card=session["fit_card"] is not None,
+        )
         return session
 
 
