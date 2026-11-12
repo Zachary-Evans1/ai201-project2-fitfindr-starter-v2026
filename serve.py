@@ -36,17 +36,43 @@ what belongs in one — and the timing field is the one everybody skips.
 import os
 import sys
 import threading
+import time
 
 # config first, and before anything that talks to the model: it loads your .env
 # and fixes the Windows console encoding for every module that imports it.
 import config  # noqa: F401
 
-from flask import Flask, jsonify, request
+from flask import Flask, g, jsonify, request
 
+import runlog
 from agent import run_agent
 from utils.data_loader import get_example_wardrobe
 
 app = Flask(__name__)
+
+
+# ── request log ───────────────────────────────────────────────────────────────
+# One "request" line per HTTP call, for every route. The hooks below time the
+# call and read the status code, so the routes themselves don't change.
+
+@app.before_request
+def _start_request_log():
+    runlog.clear_run()
+    g.t0 = time.monotonic()
+
+
+@app.after_request
+def _log_request(response):
+    runlog.event(
+        "request",
+        method=request.method,
+        path=request.path,
+        status=response.status_code,
+        ms=runlog.ms_since(g.t0),
+        lock_wait_ms=getattr(g, "lock_wait_ms", None),
+        error=getattr(g, "error", None),
+    )
+    return response
 
 
 # ── one request at a time ─────────────────────────────────────────────────────
@@ -138,11 +164,14 @@ def ask():
 
     failure = None
     session = None
+    waiting_since = time.monotonic()
     with _one_at_a_time:
+        g.lock_wait_ms = runlog.ms_since(waiting_since)
         try:
             session = run_agent(query, wardrobe)
         except Exception as exc:  # noqa: BLE001 — a 500 with a sentence beats a hang
             failure = f"{type(exc).__name__}: {exc}"
+            g.error = type(exc).__name__
 
     # Outside the lock: building a response is not work the next caller should
     # be waiting on.
