@@ -29,7 +29,10 @@ right trade for one unit.
 import asyncio
 import json
 import sys
+import time
 from pathlib import Path
+
+import runlog
 
 SERVER = Path(__file__).parent / "mcp_server.py"
 
@@ -55,17 +58,41 @@ def call_tool(name: str, arguments: dict):
     Raises:
         MCPError, with something readable in it.
     """
+    t0 = time.monotonic()
     try:
-        return asyncio.run(_call(name, arguments))
-    except MCPError:
+        result = asyncio.run(_call(name, arguments))
+    except MCPError as exc:
+        runlog.event(
+            "mcp_call",
+            tool=name,
+            ok=False,
+            ms=runlog.ms_since(t0),
+            error=str(exc).splitlines()[0],
+        )
         raise
     except Exception as exc:  # noqa: BLE001 — re-raised readably below
+        runlog.event(
+            "mcp_call",
+            tool=name,
+            ok=False,
+            ms=runlog.ms_since(t0),
+            error=type(exc).__name__,
+        )
         raise MCPError(
             f"Couldn't call '{name}' over MCP: {exc}\n"
             f"Check that mcp_server.py runs on its own first:\n"
             f"    python mcp_server.py\n"
             f"If it exits immediately with an error, fix that before coming back here."
         ) from exc
+
+    runlog.event(
+        "mcp_call",
+        tool=name,
+        ok=True,
+        ms=runlog.ms_since(t0),
+        returned_count=len(result) if isinstance(result, list) else None,
+    )
+    return result
 
 
 async def _call(name: str, arguments: dict):
