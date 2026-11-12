@@ -35,6 +35,7 @@ import sys
 import time
 
 import config
+import runlog
 
 _call_times: list[float] = []
 _session_calls = 0
@@ -198,6 +199,20 @@ def _record_tokens(response) -> None:
         pass
 
 
+def _tokens_of(response) -> tuple[int | None, int | None]:
+    """Prompt and output token counts for one response. None where the service didn't report them."""
+    try:
+        meta = getattr(response, "usage_metadata", None)
+        prompt = getattr(meta, "prompt_token_count", None)
+        output = getattr(meta, "candidates_token_count", None)
+        return (
+            prompt if isinstance(prompt, int) else None,
+            output if isinstance(output, int) else None,
+        )
+    except Exception:  # noqa: BLE001 — logging must never break a working call
+        return (None, None)
+
+
 # ─── The call ────────────────────────────────────────────────────────────────
 
 
@@ -288,9 +303,17 @@ def generate(
     key = _cache_key(prompt, system, temperature)
 
     if use_cache:
+        t0 = time.monotonic()
         hit = _cache_read(key)
         if hit is not None:
             _cache_hits += 1
+            runlog.event(
+                "model_call",
+                cache_hit=True,
+                ok=True,
+                ms=runlog.ms_since(t0),
+                prompt_chars=len(prompt),
+            )
             return hit
 
     _check_budget()
@@ -298,6 +321,7 @@ def generate(
     last_error: Exception | None = None
     for attempt in range(config.MAX_RETRIES):
         _wait_for_slot()
+        attempt_t0 = time.monotonic()
         try:
             client = _get_client()
             _call_times.append(time.monotonic())
@@ -315,6 +339,18 @@ def generate(
             response = client.models.generate_content(**kwargs)
             _record_tokens(response)
             text = (response.text or "").strip()
+
+            prompt_tokens, output_tokens = _tokens_of(response)
+            runlog.event(
+                "model_call",
+                cache_hit=False,
+                ok=True,
+                attempt=attempt + 1,
+                ms=runlog.ms_since(attempt_t0),
+                prompt_chars=len(prompt),
+                prompt_tokens=prompt_tokens,
+                output_tokens=output_tokens,
+            )
 
             if use_cache:
                 _cache_write(key, text)
