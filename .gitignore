@@ -15,6 +15,9 @@ env/
 # Cached model responses
 .cache/
 
+# Live run log. Copy the lines you need into results/ or the README and commit those.
+logs/
+
 # OS noise
 .DS_Store
 Thumbs.db
