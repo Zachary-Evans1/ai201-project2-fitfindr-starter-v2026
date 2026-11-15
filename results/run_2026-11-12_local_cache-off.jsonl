@@ -1,0 +1,66 @@
+{"ts": "2026-11-12T01:12:51+00:00", "run_id": "fddd8f9a", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-12T01:12:53+00:00", "run_id": "fddd8f9a", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 2223, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-12T01:12:54+00:00", "run_id": "fddd8f9a", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 653, "returned_count": 10}
+{"ts": "2026-11-12T01:12:55+00:00", "run_id": "fddd8f9a", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1228, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 281}
+{"ts": "2026-11-12T01:12:55+00:00", "run_id": "fddd8f9a", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 674, "prompt_chars": 1717, "prompt_tokens": 416, "output_tokens": 59}
+{"ts": "2026-11-12T01:12:55+00:00", "run_id": "fddd8f9a", "event": "run_end", "outcome": "completed", "ms": 4789, "has_fit_card": true}
+{"ts": "2026-11-12T01:12:56+00:00", "run_id": "0df37a2c", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-12T01:12:58+00:00", "run_id": "0df37a2c", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1885, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-12T01:12:58+00:00", "run_id": "0df37a2c", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 655, "returned_count": 10}
+{"ts": "2026-11-12T01:13:00+00:00", "run_id": "0df37a2c", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1260, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 311}
+{"ts": "2026-11-12T01:13:00+00:00", "run_id": "0df37a2c", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 735, "prompt_chars": 1848, "prompt_tokens": 446, "output_tokens": 52}
+{"ts": "2026-11-12T01:13:00+00:00", "run_id": "0df37a2c", "event": "run_end", "outcome": "completed", "ms": 4538, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:01+00:00", "run_id": "7ae14095", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-12T01:13:02+00:00", "run_id": "7ae14095", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1890, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-12T01:13:03+00:00", "run_id": "7ae14095", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 652, "returned_count": 10}
+{"ts": "2026-11-12T01:13:04+00:00", "run_id": "7ae14095", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1118, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 272}
+{"ts": "2026-11-12T01:13:05+00:00", "run_id": "7ae14095", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 683, "prompt_chars": 1693, "prompt_tokens": 407, "output_tokens": 57}
+{"ts": "2026-11-12T01:13:05+00:00", "run_id": "7ae14095", "event": "run_end", "outcome": "completed", "ms": 4346, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:05+00:00", "run_id": "e6a3f264", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-12T01:13:07+00:00", "run_id": "e6a3f264", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 2019, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-12T01:13:08+00:00", "run_id": "e6a3f264", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 639, "returned_count": 10}
+{"ts": "2026-11-12T01:13:09+00:00", "run_id": "e6a3f264", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1210, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 293}
+{"ts": "2026-11-12T01:13:10+00:00", "run_id": "e6a3f264", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 826, "prompt_chars": 1782, "prompt_tokens": 428, "output_tokens": 61}
+{"ts": "2026-11-12T01:13:10+00:00", "run_id": "e6a3f264", "event": "run_end", "outcome": "completed", "ms": 4697, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:10+00:00", "run_id": "8d4a9cc5", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-12T01:13:13+00:00", "run_id": "8d4a9cc5", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 2422, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-12T01:13:13+00:00", "run_id": "8d4a9cc5", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 636, "returned_count": 10}
+{"ts": "2026-11-12T01:13:15+00:00", "run_id": "8d4a9cc5", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1459, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 302}
+{"ts": "2026-11-12T01:13:15+00:00", "run_id": "8d4a9cc5", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 723, "prompt_chars": 1759, "prompt_tokens": 437, "output_tokens": 52}
+{"ts": "2026-11-12T01:13:15+00:00", "run_id": "8d4a9cc5", "event": "run_end", "outcome": "completed", "ms": 5242, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:16+00:00", "run_id": "e083479c", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-12T01:13:18+00:00", "run_id": "e083479c", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 2056, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-12T01:13:18+00:00", "run_id": "e083479c", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 732, "returned_count": 10}
+{"ts": "2026-11-12T01:13:20+00:00", "run_id": "e083479c", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1525, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 333}
+{"ts": "2026-11-12T01:13:21+00:00", "run_id": "e083479c", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 652, "prompt_chars": 1981, "prompt_tokens": 468, "output_tokens": 63}
+{"ts": "2026-11-12T01:13:21+00:00", "run_id": "e083479c", "event": "run_end", "outcome": "completed", "ms": 4969, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:21+00:00", "run_id": "534f6b9b", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-12T01:13:23+00:00", "run_id": "534f6b9b", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 2083, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-12T01:13:24+00:00", "run_id": "534f6b9b", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 644, "returned_count": 10}
+{"ts": "2026-11-12T01:13:25+00:00", "run_id": "534f6b9b", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1237, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 275}
+{"ts": "2026-11-12T01:13:26+00:00", "run_id": "534f6b9b", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 620, "prompt_chars": 1734, "prompt_tokens": 410, "output_tokens": 70}
+{"ts": "2026-11-12T01:13:26+00:00", "run_id": "534f6b9b", "event": "run_end", "outcome": "completed", "ms": 4587, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:26+00:00", "run_id": "a3b69e7b", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-12T01:13:28+00:00", "run_id": "a3b69e7b", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 2067, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-12T01:13:29+00:00", "run_id": "a3b69e7b", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 655, "returned_count": 10}
+{"ts": "2026-11-12T01:13:30+00:00", "run_id": "a3b69e7b", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1733, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 301}
+{"ts": "2026-11-12T01:13:31+00:00", "run_id": "a3b69e7b", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 653, "prompt_chars": 1766, "prompt_tokens": 436, "output_tokens": 61}
+{"ts": "2026-11-12T01:13:31+00:00", "run_id": "a3b69e7b", "event": "run_end", "outcome": "completed", "ms": 5114, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:31+00:00", "run_id": "f871e771", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-12T01:13:33+00:00", "run_id": "f871e771", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 2057, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-12T01:13:34+00:00", "run_id": "f871e771", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 737, "returned_count": 10}
+{"ts": "2026-11-12T01:13:34+00:00", "run_id": "f871e771", "event": "model_retry", "attempt": 1, "backoff_s": 26.7, "ms": 117}
+{"ts": "2026-11-12T01:14:01+00:00", "run_id": "f871e771", "event": "model_retry", "attempt": 2, "backoff_s": 59.8, "ms": 240}
+{"ts": "2026-11-12T01:15:03+00:00", "run_id": "f871e771", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 3, "ms": 1844, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 271}
+{"ts": "2026-11-12T01:15:03+00:00", "run_id": "f871e771", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 641, "prompt_chars": 1687, "prompt_tokens": 406, "output_tokens": 60}
+{"ts": "2026-11-12T01:15:03+00:00", "run_id": "f871e771", "event": "run_end", "outcome": "completed", "ms": 92060, "has_fit_card": true}
+{"ts": "2026-11-12T01:15:04+00:00", "run_id": "ff880eb0", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-12T01:15:06+00:00", "run_id": "ff880eb0", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 2182, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-12T01:15:07+00:00", "run_id": "ff880eb0", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 675, "returned_count": 10}
+{"ts": "2026-11-12T01:15:08+00:00", "run_id": "ff880eb0", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1375, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 273}
+{"ts": "2026-11-12T01:15:09+00:00", "run_id": "ff880eb0", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 788, "prompt_chars": 1677, "prompt_tokens": 408, "output_tokens": 57}
+{"ts": "2026-11-12T01:15:09+00:00", "run_id": "ff880eb0", "event": "run_end", "outcome": "completed", "ms": 5023, "has_fit_card": true}
+{"ts": "2026-11-12T01:27:35+00:00", "run_id": "7b15653a", "event": "run_start", "query": "designer ballgown size XXS under $5"}
+{"ts": "2026-11-12T01:27:37+00:00", "run_id": "7b15653a", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 2828, "prompt_chars": 435, "prompt_tokens": 101, "output_tokens": 31}
+{"ts": "2026-11-12T01:27:39+00:00", "run_id": "7b15653a", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 1537, "returned_count": 0}
+{"ts": "2026-11-12T01:27:39+00:00", "run_id": "7b15653a", "event": "run_end", "outcome": "stopped_no_results", "ms": 4366}

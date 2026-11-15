@@ -637,6 +637,46 @@ I am deploying FitFinder to a Render URL that is started with `gunicorn serve:ap
 
 
 
+
+
+##  Instrumentation
+
+**Ten Logs**
+
+Ten matching-query runs with the cache off, one `run_end` record each. All ten records and the failed run are in [results/run_2026-11-12_local_cache-off.jsonl](results/run_2026-11-12_local_cache-off.jsonl).
+
+```json
+{"ts": "2026-11-12T01:12:55+00:00", "run_id": "fddd8f9a", "event": "run_end", "outcome": "completed", "ms": 4789, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:00+00:00", "run_id": "0df37a2c", "event": "run_end", "outcome": "completed", "ms": 4538, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:05+00:00", "run_id": "7ae14095", "event": "run_end", "outcome": "completed", "ms": 4346, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:10+00:00", "run_id": "e6a3f264", "event": "run_end", "outcome": "completed", "ms": 4697, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:15+00:00", "run_id": "8d4a9cc5", "event": "run_end", "outcome": "completed", "ms": 5242, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:21+00:00", "run_id": "e083479c", "event": "run_end", "outcome": "completed", "ms": 4969, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:26+00:00", "run_id": "534f6b9b", "event": "run_end", "outcome": "completed", "ms": 4587, "has_fit_card": true}
+{"ts": "2026-11-12T01:13:31+00:00", "run_id": "a3b69e7b", "event": "run_end", "outcome": "completed", "ms": 5114, "has_fit_card": true}
+{"ts": "2026-11-12T01:15:03+00:00", "run_id": "f871e771", "event": "run_end", "outcome": "completed", "ms": 92060, "has_fit_card": true}
+{"ts": "2026-11-12T01:15:09+00:00", "run_id": "ff880eb0", "event": "run_end", "outcome": "completed", "ms": 5023, "has_fit_card": true}
+```
+
+The 92,060 ms run (`f871e771`) is the rate-limited one. Its outfit call was rejected with a 429 twice, and the `model_retry` records for that run show waits of 26.7 s and 59.8 s.
+
+**Failed run:** a query with no matching listings (`designer ballgown size XXS under $5`). It stopped at the branch, and no fit card was made.
+
+```json
+{"ts": "2026-11-12T01:27:35+00:00", "run_id": "7b15653a", "event": "run_start", "query": "designer ballgown size XXS under $5"}
+{"ts": "2026-11-12T01:27:37+00:00", "run_id": "7b15653a", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 2828, "prompt_chars": 435, "prompt_tokens": 101, "output_tokens": 31}
+{"ts": "2026-11-12T01:27:39+00:00", "run_id": "7b15653a", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 1537, "returned_count": 0}
+{"ts": "2026-11-12T01:27:39+00:00", "run_id": "7b15653a", "event": "run_end", "outcome": "stopped_no_results", "ms": 4366}
+```
+
+
+
+### What It Costs
+
+**Cost of one Run:** About 1,087 tokens and about 4.8 s of compute per run. The median run time is 4.9 s. The mean is 13.5 s because one run was rate-limited (see above). The free tier costs $0, so the tokens and seconds are the real cost.
+
+**How I measured it:** I ran `AI201_CACHE=0 python app.py ask 'vintage graphic tee under $30'` ten times locally on Windows 11 with Python 3.13. For each run I took `run_end.ms` as the time, and added the `prompt_tokens` and `output_tokens` from its three `model_call` records as the tokens. The token count per run ranged from 1,046 to 1,174, with a mean of 1,087. The 4.8 s figure is the mean of the nine runs without the rate-limited one. I did not measure dollar cost. I did not check any paid pricing, so a dollar figure would be an estimate, not a measurement.
+
 ---
 
 📖 **How to run this project: [RUNNING.md](RUNNING.md)**

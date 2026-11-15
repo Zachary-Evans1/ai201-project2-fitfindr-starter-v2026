@@ -4,6 +4,142 @@ Everything about how the starter works and how to use it.
 
 ---
 
+## Start here: run FitFindr
+
+FitFindr searches a set of thrift-store listings from a description, a size and
+a maximum price. For the best match it suggests outfits from a wardrobe and
+writes a short fit-card caption. The language model is Google's Gemini, so you
+need a free API key.
+
+**You need**
+
+- Python 3.11, 3.12 or 3.13. **Not 3.14.**
+- Git
+- A Gemini API key from [aistudio.google.com](https://aistudio.google.com).
+  Sign in, create a project, and create a key inside it.
+- An internet connection
+
+### 1. Get the code
+
+```bash
+git clone https://github.com/Zachary-Evans1/ai201-project2-fitfindr-starter-v2026
+cd ai201-project2-fitfindr-starter-v2026
+```
+
+### 2. Create a virtual environment and install the packages
+
+**Windows (PowerShell)**
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+If PowerShell refuses to run the activate script, run this once and try again:
+`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+
+**macOS / Linux**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+The `(.venv)` prefix in your prompt means it's active. Activate it again in
+every new terminal.
+
+### 3. Add your API key
+
+**Windows:** `copy .env.example .env`
+**macOS / Linux:** `cp .env.example .env`
+
+Open `.env` in a text editor and replace `your_key_here` with your key. Keep
+the `GEMINI_API_KEY=` part. Don't add quotes or spaces. Check that the file is
+named `.env` and not `.env.txt`. The file is gitignored, so it won't be
+committed.
+
+### 4. Check that it works
+
+```bash
+python test.py
+```
+
+You should see `10 passed, 0 failed`. If the model check fails, the key is
+wrong or missing. Fix it in `.env` and run `test.py` again.
+
+### 5. Run it
+
+```bash
+python app.py ask 'vintage graphic tee under $30'
+python app.py ask 'designer ballgown size XXS under $5'
+```
+
+Use **single quotes** around the query. In PowerShell, double quotes turn
+`$30` into an empty variable, and the price limit is silently dropped.
+
+- The first query prints a **Found:** line with a listing, then **Outfit:** and
+  **Fit card:**.
+- The second query prints **stopped:** and says no listings matched. It tells
+  you what to change. It has no fit card, and that's correct.
+
+`python agent.py` runs both queries in one command.
+
+### 6. Run the web server (optional)
+
+```bash
+python serve.py
+```
+
+It prints `FitFindr is listening on http://localhost:5000`. Leave it running,
+and in a second terminal:
+
+**Windows (PowerShell)**
+
+```powershell
+Invoke-RestMethod -Uri "http://localhost:5000/health"
+Invoke-RestMethod -Uri "http://localhost:5000/ask" -Method Post -ContentType "application/json" -Body '{"query": "vintage graphic tee under $30"}'
+```
+
+**macOS / Linux**
+
+```bash
+curl http://localhost:5000/health
+curl -X POST http://localhost:5000/ask -H 'Content-Type: application/json' -d '{"query": "vintage graphic tee under $30"}'
+```
+
+`/health` returns `{"status":"ok"}`. `/ask` returns the full session as JSON.
+Stop the server with Ctrl+C.
+
+### 7. The hosted version
+
+The same server is deployed at
+`https://ai201-project2-fitfindr-starter-v2026-hjlm.onrender.com`. Use the same
+`/health` and `/ask` requests with that address in place of `localhost:5000`.
+The free host goes to sleep when idle. The first request after a quiet period
+can take about a minute.
+
+### Each run is logged
+
+Every run appends records to `logs/run.jsonl`. See **The run log** below for what
+each record means.
+
+### If something goes wrong
+
+| What you see | What to do |
+|---|---|
+| `No GEMINI_API_KEY found` | `.env` is missing or misnamed. Check step 3 |
+| `The model rejected your API key` | The key is wrong or incomplete. Create a new one at aistudio.google.com |
+| `Couldn't reach the model` | Check your internet connection and try again |
+| `[rate limit] ... Waiting 34s` | Normal. The app is pacing its requests. Wait |
+| The price limit is ignored | You used double quotes in PowerShell. Use single quotes |
+
+More problems and their causes are listed under **When something goes wrong**
+below.
+
+---
+
 ## Before your first class
 
 Setup happens **before class**. The [environment setup page](../pages/ide_setup)
@@ -149,11 +285,72 @@ gunicorn serve:app
 | `gunicorn serve:app`, exactly | Not `-k gevent`, not `-k eventlet`, not wrapped for uvicorn. `mcp_client.call_tool` uses `asyncio.run()`, which won't start inside a running event loop, so an async worker breaks **every** MCP call — and only once you've deployed it |
 | The first request is slow | The free tier puts your app to sleep after about fifteen minutes of nothing. The next request wakes it up and waits for it — around a minute. Not a bug, and worth knowing before you demo it |
 
-`serve.py` ships with **no logging and no timing in it**, on purpose. You add
-that yourself in the follow-along, before you deploy — instrumenting first is
-the point of the session.
+`serve.py` writes a `request` record for every HTTP call, and every agent run
+writes its own records. See **The run log** below.
+
+### Deploying to Render (Path A)
+
+Render builds from the code on GitHub, not from your machine. **Push your
+commits first**, or the deploy will run old code.
+
+| Setting | Value |
+|---|---|
+| Runtime | Python |
+| Build command | `pip install -r requirements.txt` |
+| Start command | `gunicorn serve:app` |
+| Instance type | Free |
+| Environment variable `GEMINI_API_KEY` | Your key. Set it in the Render dashboard only. Never put it in a file in the repo |
+| Environment variable `PYTHON_VERSION` | `3.13.13`. The requirements don't support 3.14, and Render may default to a newer version |
+
+Check that it's up:
+
+```bash
+curl https://YOUR-URL.onrender.com/health
+```
+
+Free instances go to sleep after about fifteen minutes, and their disk is wiped
+when they do. That includes `logs/`. Copy the log lines you need into
+`results/` and commit them the same session.
+
+**On Windows, `gunicorn` won't run** — it imports `fcntl`, which only exists on
+Linux and macOS. Use `python serve.py` on your machine. Render runs Linux, so
+the start command above works there.
 
 ---
+
+## The run log
+
+Every run writes one JSON object per line to `logs/run.jsonl`. The `logs/`
+folder is gitignored. When you want to keep lines, copy them into `results/`
+and commit that copy.
+
+| Event | Written by | Main fields |
+|---|---|---|
+| `run_start` | `agent.py` | `query` |
+| `model_call` | `generate.py` | `ok`, `cache_hit`, `attempt`, `ms`, `prompt_tokens`, `output_tokens`, `error` |
+| `model_retry` | `generate.py` | `attempt`, `backoff_s`, `ms` |
+| `mcp_call` | `mcp_client.py` | `tool`, `ok`, `ms`, `returned_count`, `error` |
+| `run_end` | `agent.py` | `outcome` (`completed` or `stopped_no_results`), `ms`, `has_fit_card` |
+| `request` | `serve.py` | `method`, `path`, `status`, `ms`, `lock_wait_ms`, `error` |
+
+Every line also has `ts` (a timestamp) and `run_id`. Lines from the same run
+share a `run_id`, so you can pull one run out of the file.
+
+Read the log back in PowerShell:
+
+```powershell
+Get-Content logs\run.jsonl
+```
+
+**For real timings, turn the cache off.** Answers are cached by default, so a
+cached model call shows `ms: 0` and no tokens. Turn the cache off for the
+current shell only:
+
+```powershell
+$env:AI201_CACHE = "0"     # macOS / Linux: export AI201_CACHE=0
+```
+
+Turn it back on with `Remove-Item Env:AI201_CACHE` (macOS / Linux: `unset AI201_CACHE`).
 
 ## Where everything lives
 
@@ -174,6 +371,8 @@ the point of the session.
 | `data/` | 40 listings and the wardrobe schema |
 | `utils/data_loader.py` | Loading the data. Use this rather than reading the files yourself |
 | `results/` | Run logs. **Commit these** — they're your evidence |
+| `runlog.py` | Writes the run log. Every other file that logs calls into it |
+| `logs/` | The live run log, `logs/run.jsonl`. Gitignored. Copy what you keep into `results/` |
 
 ---
 
@@ -230,6 +429,8 @@ is the most common architectural failure in production agents.
 | `--trace` prints nothing | You haven't added `trace.step()` calls yet — unit 4, Milestone 2 |
 | `IncompleteFieldDefinitionWarning: Field 'lifespan'` | Harmless noise from the MCP library's dependencies. Not your code, not an error. Ignore it |
 | A price ceiling you typed is being ignored | You used double quotes in PowerShell. `$30` vanished. Use single quotes |
+| `ModuleNotFoundError: No module named 'fcntl'` when you run `gunicorn` | You're on Windows. `gunicorn` only runs on Linux and macOS. Use `python serve.py` locally |
+| The hosted `/ask` returns `ModelUnavailable: ... rejected your API key` | The `GEMINI_API_KEY` in the host's environment is wrong or incomplete. Re-paste it in the dashboard and let the service redeploy. `/health` still works while this happens |
 | `UnicodeEncodeError: 'charmap' codec can't encode` | Shouldn't happen — `config.py` sets the console to UTF-8. If you see it, you're running a file that doesn't import `config` |
 
 Still stuck after one honest attempt? Post in the help channel with the full
