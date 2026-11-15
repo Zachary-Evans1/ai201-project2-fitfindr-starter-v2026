@@ -82,9 +82,9 @@ A normal not rate limited completed CLI run measured with `run_end.ms` should ta
 
 ## 7. Speed of a cold start request from render
 
-A request from the cold start, or a run after 15 minutes of inactiveness, of a service should take no longer than 66000ms (1 minute and 6 seconds) to give an answer, measured manually by me through my phone's stop watch, starting when I send the ask message, and ending when I see the response. In 2/2 Runs.
+A request from the cold start, or a run after 15 minutes of inactiveness, of a service should take no longer than 66000ms (1 minute and 6 seconds) to give an answer, measured manually by me through my phone's stop watch, starting when I send the ask message, and ending when I see the response. In 1/1 Runs.
 
-**Why this target: Render claims that their free tier wake-up time is about one minute, plus 6000ms from the request means that it a cold start request should take around 66000ms. 2/2 because I have to wait 16 minutes between runs and don't want to wait two and a half hours.**
+**Why this target: Render claims that their free tier wake-up time is about one minute, plus 6000ms from the request means that it a cold start request should take around 66000ms. 1/1 because I have to wait 16 minutes between runs and don't want to wait two and a half hours.**
 
 ## 8. Total model tokens used per run with cache off
 

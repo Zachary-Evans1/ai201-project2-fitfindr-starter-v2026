@@ -678,7 +678,141 @@ The 92,060 ms run (`f871e771`) is the rate-limited one. Its outfit call was reje
 **Cost of one Run:** About 1,087 tokens and about 4.8 s of compute per run. The median run time is 4.9 s. The mean is 13.5 s because one run was rate-limited (see above). The free tier costs $0, so the tokens and seconds are the real cost.
 
 **How I measured it:** I ran `AI201_CACHE=0 python app.py ask 'vintage graphic tee under $30'` ten times locally on Windows 11 with Python 3.13. For each run I took `run_end.ms` as the time, and added the `prompt_tokens` and `output_tokens` from its three `model_call` records as the tokens. The token count per run ranged from 1,046 to 1,174, with a mean of 1,087. The 4.8 s figure is the mean of the nine runs without the rate-limited one. I did not measure dollar cost. I did not check any paid pricing, so a dollar figure would be an estimate, not a measurement.
+---
+
+## Run Log - Before
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 6. A normal not rate limited completed CLI run should take no more than 6000ms to answer | 8 of 10 | 9/10 | 9/10 | 9/10 | MET |
+| 7. A request from the cold start should take no longer than 66000ms | 1 of 1 | 47720ms | 41590ms | 46580ms | Met |
+| 8. A full complete service run, that generates a fit card, should stay at or under 1200 total tokens | 8 of 10 | 10/10 | 10/10 | 10/10 | MET |
+| 9. When a run fails, the system will give the user a message and not crash | 10 of 10 | 10/10 | 10/10 | 10/10 | MET |
+| 10. For every run its run_start, model and mcp calls, and run_end for completed or stopped runs, will be logged success or fail | 20 of 20 | 20/20 | 20/20 | 20/20 | MET |
+
+
+### Log lines from trial 1:
+```
+{"ts": "2026-11-15T21:24:04+00:00", "run_id": "dcfda3a7", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:24:07+00:00", "run_id": "dcfda3a7", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 2153, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-15T21:24:07+00:00", "run_id": "dcfda3a7", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 726, "returned_count": 10}
+{"ts": "2026-11-15T21:24:09+00:00", "run_id": "dcfda3a7", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1526, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 275}
+{"ts": "2026-11-15T21:24:10+00:00", "run_id": "dcfda3a7", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1240, "prompt_chars": 1732, "prompt_tokens": 410, "output_tokens": 65}
+{"ts": "2026-11-15T21:24:10+00:00", "run_id": "dcfda3a7", "event": "run_end", "outcome": "completed", "ms": 5649, "has_fit_card": true}
+{"ts": "2026-11-15T21:24:10+00:00", "run_id": "0dd2709d", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:24:11+00:00", "run_id": "0dd2709d", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 497, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-15T21:24:11+00:00", "run_id": "0dd2709d", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 727, "returned_count": 10}
+{"ts": "2026-11-15T21:24:13+00:00", "run_id": "0dd2709d", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1840, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 283}
+{"ts": "2026-11-15T21:24:14+00:00", "run_id": "0dd2709d", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 692, "prompt_chars": 1790, "prompt_tokens": 418, "output_tokens": 53}
+{"ts": "2026-11-15T21:24:14+00:00", "run_id": "0dd2709d", "event": "run_end", "outcome": "completed", "ms": 3759, "has_fit_card": true}
+{"ts": "2026-11-15T21:24:14+00:00", "run_id": "6b9ee5ca", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:24:15+00:00", "run_id": "6b9ee5ca", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 672, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-15T21:24:15+00:00", "run_id": "6b9ee5ca", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 692, "returned_count": 10}
+{"ts": "2026-11-15T21:24:16+00:00", "run_id": "6b9ee5ca", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1018, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 183}
+{"ts": "2026-11-15T21:24:17+00:00", "run_id": "6b9ee5ca", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 687, "prompt_chars": 1290, "prompt_tokens": 318, "output_tokens": 61}
+{"ts": "2026-11-15T21:24:17+00:00", "run_id": "6b9ee5ca", "event": "run_end", "outcome": "completed", "ms": 3072, "has_fit_card": true}
+{"ts": "2026-11-15T21:24:17+00:00", "run_id": "9aca927e", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:24:18+00:00", "run_id": "9aca927e", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 552, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-15T21:24:18+00:00", "run_id": "9aca927e", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 716, "returned_count": 10}
+{"ts": "2026-11-15T21:24:20+00:00", "run_id": "9aca927e", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1480, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 203}
+{"ts": "2026-11-15T21:24:20+00:00", "run_id": "9aca927e", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 767, "prompt_chars": 1389, "prompt_tokens": 338, "output_tokens": 58}
+{"ts": "2026-11-15T21:24:20+00:00", "run_id": "9aca927e", "event": "run_end", "outcome": "completed", "ms": 3517, "has_fit_card": true}
+{"ts": "2026-11-15T21:24:20+00:00", "run_id": "d1e8002a", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:24:21+00:00", "run_id": "d1e8002a", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 782, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-15T21:24:22+00:00", "run_id": "d1e8002a", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 755, "returned_count": 10}
+{"ts": "2026-11-15T21:24:23+00:00", "run_id": "d1e8002a", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1163, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 255}
+{"ts": "2026-11-15T21:24:24+00:00", "run_id": "d1e8002a", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 677, "prompt_chars": 1593, "prompt_tokens": 390, "output_tokens": 61}
+{"ts": "2026-11-15T21:24:24+00:00", "run_id": "d1e8002a", "event": "run_end", "outcome": "completed", "ms": 3380, "has_fit_card": true}
+{"ts": "2026-11-15T21:24:24+00:00", "run_id": "8c1ec00c", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:25:07+00:00", "run_id": "8c1ec00c", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 665, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-15T21:25:07+00:00", "run_id": "8c1ec00c", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 701, "returned_count": 10}
+{"ts": "2026-11-15T21:25:09+00:00", "run_id": "8c1ec00c", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1638, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 327}
+{"ts": "2026-11-15T21:25:10+00:00", "run_id": "8c1ec00c", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 769, "prompt_chars": 1983, "prompt_tokens": 462, "output_tokens": 62}
+{"ts": "2026-11-15T21:25:10+00:00", "run_id": "8c1ec00c", "event": "run_end", "outcome": "completed", "ms": 46009, "has_fit_card": true}
+{"ts": "2026-11-15T21:25:10+00:00", "run_id": "21a25dc3", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:25:11+00:00", "run_id": "21a25dc3", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 547, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-15T21:25:12+00:00", "run_id": "21a25dc3", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 763, "returned_count": 10}
+{"ts": "2026-11-15T21:25:13+00:00", "run_id": "21a25dc3", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1319, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 280}
+{"ts": "2026-11-15T21:25:14+00:00", "run_id": "21a25dc3", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 801, "prompt_chars": 1720, "prompt_tokens": 415, "output_tokens": 63}
+{"ts": "2026-11-15T21:25:14+00:00", "run_id": "21a25dc3", "event": "run_end", "outcome": "completed", "ms": 4227, "has_fit_card": true}
+{"ts": "2026-11-15T21:25:14+00:00", "run_id": "cefa4616", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:25:15+00:00", "run_id": "cefa4616", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 694, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-15T21:25:16+00:00", "run_id": "cefa4616", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 769, "returned_count": 10}
+{"ts": "2026-11-15T21:25:17+00:00", "run_id": "cefa4616", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1044, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 191}
+{"ts": "2026-11-15T21:25:17+00:00", "run_id": "cefa4616", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 758, "prompt_chars": 1316, "prompt_tokens": 326, "output_tokens": 70}
+{"ts": "2026-11-15T21:25:17+00:00", "run_id": "cefa4616", "event": "run_end", "outcome": "completed", "ms": 3267, "has_fit_card": true}
+{"ts": "2026-11-15T21:25:17+00:00", "run_id": "b3b7d88d", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:25:18+00:00", "run_id": "b3b7d88d", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 589, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-15T21:25:19+00:00", "run_id": "b3b7d88d", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 742, "returned_count": 10}
+{"ts": "2026-11-15T21:25:20+00:00", "run_id": "b3b7d88d", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1511, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 303}
+{"ts": "2026-11-15T21:25:21+00:00", "run_id": "b3b7d88d", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 762, "prompt_chars": 1823, "prompt_tokens": 438, "output_tokens": 51}
+{"ts": "2026-11-15T21:25:21+00:00", "run_id": "b3b7d88d", "event": "run_end", "outcome": "completed", "ms": 3606, "has_fit_card": true}
+{"ts": "2026-11-15T21:25:21+00:00", "run_id": "62f98e74", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:25:22+00:00", "run_id": "62f98e74", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 725, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
+{"ts": "2026-11-15T21:25:22+00:00", "run_id": "62f98e74", "event": "mcp_call", "tool": "search_listings", "ok": true, "ms": 689, "returned_count": 10}
+{"ts": "2026-11-15T21:25:24+00:00", "run_id": "62f98e74", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 1205, "prompt_chars": 731, "prompt_tokens": 181, "output_tokens": 283}
+{"ts": "2026-11-15T21:25:24+00:00", "run_id": "62f98e74", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 743, "prompt_chars": 1691, "prompt_tokens": 418, "output_tokens": 54}
+{"ts": "2026-11-15T21:25:24+00:00", "run_id": "62f98e74", "event": "run_end", "outcome": "completed", "ms": 3365, "has_fit_card": true}
+{"ts": "2026-11-15T21:25:24+00:00", "run_id": "40f95abb", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:26:06+00:00", "run_id": "40f95abb", "event": "model_call", "cache_hit": false, "ok": false, "attempt": 1, "ms": 234, "error": "ClientError"}
+{"ts": "2026-11-15T21:26:06+00:00", "run_id": "ad95cfa0", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:26:08+00:00", "run_id": "ad95cfa0", "event": "model_call", "cache_hit": false, "ok": false, "attempt": 1, "ms": 169, "error": "ClientError"}
+{"ts": "2026-11-15T21:26:08+00:00", "run_id": "fa8dfed7", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:26:09+00:00", "run_id": "fa8dfed7", "event": "model_call", "cache_hit": false, "ok": false, "attempt": 1, "ms": 207, "error": "ClientError"}
+{"ts": "2026-11-15T21:26:09+00:00", "run_id": "581ef475", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:26:10+00:00", "run_id": "581ef475", "event": "model_call", "cache_hit": false, "ok": false, "attempt": 1, "ms": 145, "error": "ClientError"}
+{"ts": "2026-11-15T21:26:10+00:00", "run_id": "61c2525f", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:26:12+00:00", "run_id": "61c2525f", "event": "model_call", "cache_hit": false, "ok": false, "attempt": 1, "ms": 123, "error": "ClientError"}
+{"ts": "2026-11-15T21:26:12+00:00", "run_id": "05d0fd34", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:26:14+00:00", "run_id": "05d0fd34", "event": "model_call", "cache_hit": false, "ok": false, "attempt": 1, "ms": 142, "error": "ClientError"}
+{"ts": "2026-11-15T21:26:14+00:00", "run_id": "fa8acaab", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:26:14+00:00", "run_id": "fa8acaab", "event": "model_call", "cache_hit": false, "ok": false, "attempt": 1, "ms": 135, "error": "ClientError"}
+{"ts": "2026-11-15T21:26:14+00:00", "run_id": "64d4136a", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:26:16+00:00", "run_id": "64d4136a", "event": "model_call", "cache_hit": false, "ok": false, "attempt": 1, "ms": 140, "error": "ClientError"}
+{"ts": "2026-11-15T21:26:16+00:00", "run_id": "5d023efc", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:26:17+00:00", "run_id": "5d023efc", "event": "model_call", "cache_hit": false, "ok": false, "attempt": 1, "ms": 121, "error": "ClientError"}
+{"ts": "2026-11-15T21:26:17+00:00", "run_id": "1576c005", "event": "run_start", "query": "vintage graphic tee under $30"}
+{"ts": "2026-11-15T21:26:18+00:00", "run_id": "1576c005", "event": "model_call", "cache_hit": false, "ok": false, "attempt": 1, "ms": 135, "error": "ClientError"}
+```
+---
+
+
+## Verdicts and Diagnoses
+
+<!-- MET or MISSED per criterion against LAST UNIT's target, plus a sentence on
+     how you decided.
+
+     Then, for every miss: which of the four places it happened — a tool, the
+     loop's branch, the session, or the model's output — AND the mechanism.
+
+     Not a diagnosis:  "The fit card was bad."
+     A diagnosis:      "The fit card criterion missed on 2 of 5 items. Both had
+                        an empty brand field. My prompt puts the brand in the
+                        first sentence, so the card opened with a blank and read
+                        like a fragment. The tool worked; the prompt assumed a
+                        field that isn't always there."
+
+     Look for a pattern. Three misses on the same tool is one problem, not
+     three. -->
+
+| # | Criterion | Target | Verdict | How I decided |
+|---|---|---|---|---|
+| 1 | A normal not rate limited completed CLI run should take no more than 6000ms to answer | 8/10 | MET | All three trials showed that the time taken to complete a run was less than 6000ms |
+| 2 | A request from the cold start should take no longer than 66000ms | 1/1 | MET | All three trials completed in under 66000ms and had an answer. |
+| 3 | selected item state matches outfit input | 5/5 | MET | While the tests did not directly show item state, every run completed and gave a recommendation about the given item, so the right item must have passed. |
+| 4 | fit card includes item details | 4/5 | MET | Every test (5/5) had the fit card include the name, price, and platform, which meets my criteria. |
+| 5 | price ceiling is respected | 4/5 | MET | In all 5 tests, the price ceiling was respected by the code. |
+
+**Diagnoses**
+
+All criteria were met, so I don't have anything to diagnose. However, I think Criterion 1, matching query completes, may have set the target too low. For a future project I might tighten the target to 5/5 to require consistent completion on every valid try.
 
 ---
+
+## The Improvement
+
+## Run Log - After
+---
+
 
 📖 **How to run this project: [RUNNING.md](RUNNING.md)**
