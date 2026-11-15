@@ -622,7 +622,9 @@ Nothing! Every Criteria is passing! For Criteria 3, you still have to manually c
 
 **Chosen Shape: A (Deploy and instrument)**
 
-**Chosen Path: A (Hosted))**
+**Chosen Path: A (Hosted)**
+
+**Render URL: https://ai201-project2-fitfindr-starter-v2026-hjlm.onrender.com**
 
 **What I'm Adding**
 

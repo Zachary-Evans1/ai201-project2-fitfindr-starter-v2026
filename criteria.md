@@ -72,34 +72,34 @@ In 4/5 cases if a query contains a maximum price, every listing returned by `sea
 
 ---
 
-<!-- ─────────────────────────────────────────────────────────────────────────
-     UNIT 4 — read this before you change anything above.
+## UNIT 9 Criteria
 
-     If a criterion turns out to be BROKEN rather than merely unmet, you can
-     revise it, and that earns credit. But never delete or edit the original
-     line. Add the revision underneath it, like this:
+## 6. Speed of a normal request
 
-         ## 4. Something about the fit card
+A normal not rate limited completed CLI run measured with `run_end.ms` should take no more than 6000ms to answer in 8/10 runs.
 
-         The fit card is different every time.
+**Why this target: 6000ms is 5 seconds, through all the calls the system has to do, I think 6000ms is a good limit as the median run time was 4.9 seconds or 4900 ms, its a reasonable goal for 8/10 runs.**
 
-         **Why this target:** ...
+## 7. Speed of a cold start request from render
 
-         > **Revised in unit 4:** For 5 different items, the 5 fit cards share
-         > no opening sentence.
-         >
-         > **Why revised:** "different" wasn't checkable — two cards that
-         > differed by one word still counted. The new version is something I
-         > can actually score.
+A request from the cold start, or a run after 15 minutes of inactiveness, of a service should take no longer than 66000ms (1 minute and 6 seconds) to give an answer, measured manually by me through my phone's stop watch, starting when I send the ask message, and ending when I see the response. In 2/2 Runs.
 
-     That's a revision because the criterion couldn't be MEASURED.
+**Why this target: Render claims that their free tier wake-up time is about one minute, plus 6000ms from the request means that it a cold start request should take around 66000ms. 2/2 because I have to wait 16 minutes between runs and don't want to wait two and a half hours.**
 
-     Lowering a target because you missed it is not a revision, and it costs
-     you the point:
+## 8. Total model tokens used per run with cache off
 
-         ✗ "I said the empty search stops it 5 of 5 times, but I got 3 of 5,
-            so 3 of 5 is more realistic."
+A full complete service run, that generates a fit card, should stay at or under 1200 total tokens in 8/10 runs.
 
-     A number you missed stays where it is, gets diagnosed, and gets a fix
-     attempted. That's where the points are.
-     ───────────────────────────────────────────────────────────────────────── -->
+**Why this target: 1200 total tokes seems like a good limit for input+output tokens as my cost per run was averaged to 1087 tokens. 8/10 runs means a rate of 80%, which means the system isn't wasting too much tokens.**
+
+## 9. When a run fails the system will give the user a message and not crash
+
+When a run fails, the system will give the user a message and not crash in 10/10 runs.
+
+**Why this target: A failed run shouldn't crash the system, and tell the user it happened, it should do this with every failed run so a user gets feedback.**
+
+## 10. Every run appears in the log
+
+For every run its run_start, model and mcp calls, and run_end for completed or stopped runs, will be logged success or fail in 10/10 runs.
+
+**Why this target: The point of the log is to record everything, so every run should be logged.**

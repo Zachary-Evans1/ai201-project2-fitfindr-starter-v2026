@@ -57,8 +57,7 @@ every new terminal.
 
 Open `.env` in a text editor and replace `your_key_here` with your key. Keep
 the `GEMINI_API_KEY=` part. Don't add quotes or spaces. Check that the file is
-named `.env` and not `.env.txt`. The file is gitignored, so it won't be
-committed.
+named `.env` and not `.env.txt`. The file is gitignored.
 
 ### 4. Check that it works
 
@@ -86,7 +85,7 @@ Use **single quotes** around the query. In PowerShell, double quotes turn
 
 `python agent.py` runs both queries in one command.
 
-### 6. Run the web server (optional)
+### 6. Run the web server
 
 ```bash
 python serve.py
