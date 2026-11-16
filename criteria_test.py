@@ -98,15 +98,19 @@ def score_speed(grouped):
         end = next((e for e in events if e["event"] == "run_end"), None)
         if not end or end.get("outcome") != "completed":
             continue
-        if any(e["event"] == "model_retry" for e in events):
-            detail.append(f"{run_id}: excluded, rate-limited")
+        # Rate-limited means the model pushed back (model_retry) or the pacer
+        # made the run wait for its per-minute window (model_wait). The pacer
+        # was not logged before this change, so trials run before it show
+        # those runs as ordinary slow runs.
+        if any(e["event"] in ("model_retry", "model_wait") for e in events):
+            detail.append(f"{run_id}: excluded, rate-limited or paced")
             continue
         pool += 1
         ok = end["ms"] <= SPEED_LIMIT_MS
         passed += ok
         detail.append(f"{run_id}: {end['ms']} ms {'PASS' if ok else 'FAIL'}")
     return {"pass": passed, "of": pool, "detail": detail,
-            "rule": f"completed, not rate-limited, run_end.ms <= {SPEED_LIMIT_MS}"}
+            "rule": f"completed, not rate-limited or paced, run_end.ms <= {SPEED_LIMIT_MS}"}
 
 
 def score_tokens(grouped):

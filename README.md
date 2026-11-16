@@ -677,6 +677,14 @@ The 92,060 ms run (`f871e771`) is the rate-limited one. Its outfit call was reje
 
 **Cost of one Run:** About 1,087 tokens and about 4.8 s of compute per run. The median run time is 4.9 s. The mean is 13.5 s because one run was rate-limited (see above). The free tier costs $0, so the tokens and seconds are the real cost.
 
+The cost per run on the paid tier is this math: (prompttokens / 1,000,000 * 0.30) + (outputtokens / 1,000,000 * 2.50) 
+
+For my average 706.2 prompt and 380.4 output tokes this would be:
+706.2 ÷ 1,000,000 × $0.30 = $0.000212
+380.4 ÷ 1,000,000 × $2.50 = $0.000951
+$0.000212 + $0.000951 = $0.001163
+For 100 people a day that would equal 100*$0.001163 = $0.1163 a day
+
 **How I measured it:** I ran `AI201_CACHE=0 python app.py ask 'vintage graphic tee under $30'` ten times locally on Windows 11 with Python 3.13. For each run I took `run_end.ms` as the time, and added the `prompt_tokens` and `output_tokens` from its three `model_call` records as the tokens. The token count per run ranged from 1,046 to 1,174, with a mean of 1,087. The 4.8 s figure is the mean of the nine runs without the rate-limited one. I did not measure dollar cost. I did not check any paid pricing, so a dollar figure would be an estimate, not a measurement.
 ---
 
@@ -830,9 +838,26 @@ One extra thing, because runs are excluded, Criteria six will not be be tests in
 
 ## What's Still Broken
 
+Criterion 6 is still broken, so the CLI runs are a bit slow for what I want, to fix it I think I would just undo my change, because it worked better as it was before. I stopped because I ran out of time for this assignment.
+
 ## What I'd do Next
 
+The next thing I would do is revert the changes made by my fix. I would do this because the code ran better before that point, so I feel the change was for the worse.
+
+I would also maybe change criteria 7 so I don't have to spend 50 minutes per test, 45 of which is waiting.
+
 ## How I Used AI
+**Moment 1**
+
+- *What I asked for: I asked claude to add logging for me and explain as it went what it was doing.*
+- *What came back: It went through and wrote all of the logging for each area, and gave me a couple line on what it was doing.*
+- *What I changed: I asked it to stop and let me commit a few times, to save the work as it went through, I didn't find any problems with the implementation.*
+
+**Moment 2**
+
+- *What I asked for: I asked claude to make a file like scenarios.py for the new set of criteria.*
+- *What came back: Claude mad criteria_test.py for me to test the criteria against*
+- *What I changed: I had to change some of the targets as Claude was working off of old data from criteria.md as I had not saved the file yet.*
 ---
 
 
