@@ -616,7 +616,13 @@ Nothing! Every Criteria is passing! For Criteria 3, you still have to manually c
 
 # Capstone Project (Unit 9)
 
+## What it Extends
+
 **The System: FitFindr**
+
+**What I'm Adding**
+
+I am deploying FitFinder to a Render URL that is started with `gunicorn serve:app`. I'm adding a structured run log as well: one JSON line per event, written for every HTTP request, every agent run, every model call, and every MCP tool call. Each line will include a run ID, the request, whether the request went through and timing.
 
 ## The Shape
 
@@ -625,10 +631,6 @@ Nothing! Every Criteria is passing! For Criteria 3, you still have to manually c
 **Chosen Path: A (Hosted)**
 
 **Render URL: https://ai201-project2-fitfindr-starter-v2026-hjlm.onrender.com**
-
-**What I'm Adding**
-
-I am deploying FitFinder to a Render URL that is started with `gunicorn serve:app`. I'm adding a structured run log as well: one JSON line per event, written for every HTTP request, every agent run, every model call, and every MCP tool call. Each line will include a run ID, the request, whether the request went through and timing.
 
 **What's out of Scope**
 
@@ -639,13 +641,26 @@ I am deploying FitFinder to a Render URL that is started with `gunicorn serve:ap
 
 
 
+## Running It
 
+**Path: A (hosted).** Deployed on Render at `https://ai201-project2-fitfindr-starter-v2026-hjlm.onrender.com`. Check it with `GET /health`, and send queries to `POST /ask`.
+
+To deploy the same way on Render (free web service, connected to this repo's GitHub):
+
+- **Build command:** `pip install -r requirements.txt`
+- **Start command:** `gunicorn serve:app --timeout 120`. The default gunicorn worker timeout is 30 seconds, and a model call that ran longer killed the worker and returned a bare 500. The longer timeout fixed it.
+- **Environment variable:** `GEMINI_API_KEY`, set in the Render dashboard. The key is never committed.
+- **Python:** 3.13.13, set with `PYTHON_VERSION`. The requirements don't support 3.14.
+
+Full steps for running it locally, on Windows or macOS/Linux, and the example queries are in [RUNNING.md](RUNNING.md). Locally, use `python serve.py`, because gunicorn doesn't run on Windows.
 
 ##  Instrumentation
 
 **Ten Logs**
 
 Ten matching-query runs with the cache off, one `run_end` record each. All ten records and the failed run are in [results/run_2026-11-12_local_cache-off.jsonl](results/run_2026-11-12_local_cache-off.jsonl).
+
+
 
 ```json
 {"ts": "2026-11-12T01:12:55+00:00", "run_id": "fddd8f9a", "event": "run_end", "outcome": "completed", "ms": 4789, "has_fit_card": true}
