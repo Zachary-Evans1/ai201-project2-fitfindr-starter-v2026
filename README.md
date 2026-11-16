@@ -614,9 +614,9 @@ Nothing! Every Criteria is passing! For Criteria 3, you still have to manually c
 
 ---
 
-# Capstone Project (Unit 9)
+## Capstone
 
-## What it Extends
+**What This Extends**
 
 **The System: FitFindr**
 
@@ -624,7 +624,7 @@ Nothing! Every Criteria is passing! For Criteria 3, you still have to manually c
 
 I am deploying FitFinder to a Render URL that is started with `gunicorn serve:app`. I'm adding a structured run log as well: one JSON line per event, written for every HTTP request, every agent run, every model call, and every MCP tool call. Each line will include a run ID, the request, whether the request went through and timing.
 
-## The Shape
+**The Shape**
 
 **Chosen Shape: A (Deploy and instrument)**
 
@@ -641,7 +641,7 @@ I am deploying FitFinder to a Render URL that is started with `gunicorn serve:ap
 
 
 
-## Running It
+**Running It**
 
 **Path: A (hosted).** Deployed on Render at `https://ai201-project2-fitfindr-starter-v2026-hjlm.onrender.com`. Check it with `GET /health`, and send queries to `POST /ask`.
 
@@ -654,7 +654,7 @@ To deploy the same way on Render (free web service, connected to this repo's Git
 
 Full steps for running it locally, on Windows or macOS/Linux, and the example queries are in [RUNNING.md](RUNNING.md). Locally, use `python serve.py`, because gunicorn doesn't run on Windows.
 
-##  Instrumentation
+**Instrumentation**
 
 **Ten Logs**
 
@@ -688,7 +688,7 @@ The 92,060 ms run (`f871e771`) is the rate-limited one. Its outfit call was reje
 
 
 
-### What It Costs
+**What It Costs**
 
 **Cost of one Run:** About 1,087 tokens and about 4.8 s of compute per run. The median run time is 4.9 s. The mean is 13.5 s because one run was rate-limited (see above). The free tier costs $0, so the tokens and seconds are the real cost.
 
@@ -703,7 +703,9 @@ For 100 people a day that would equal 100*$0.001163 = $0.1163 a day
 **How I measured it:** I ran `AI201_CACHE=0 python app.py ask 'vintage graphic tee under $30'` ten times locally on Windows 11 with Python 3.13. For each run I took `run_end.ms` as the time, and added the `prompt_tokens` and `output_tokens` from its three `model_call` records as the tokens. The token count per run ranged from 1,046 to 1,174, with a mean of 1,087. The 4.8 s figure is the mean of the nine runs without the rate-limited one. I did not measure dollar cost. I did not check any paid pricing, so a dollar figure would be an estimate, not a measurement.
 ---
 
-## Run Log - Before
+**Run Log and Verdicts**
+
+**Run Log - Before**
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
@@ -715,6 +717,12 @@ For 100 people a day that would equal 100*$0.001163 = $0.1163 a day
 
 
 ### Log lines from trial 1:
+**Source** (written by `runlog.py::event`, which adds `ts` and `run_id` to every line):
+
+- `run_start` and `run_end`: `agent.py::run_agent`
+- `model_call`: `generate.py::generate`
+- `mcp_call`: `mcp_client.py::call_tool`
+
 ```
 {"ts": "2026-11-15T21:24:04+00:00", "run_id": "dcfda3a7", "event": "run_start", "query": "vintage graphic tee under $30"}
 {"ts": "2026-11-15T21:24:07+00:00", "run_id": "dcfda3a7", "event": "model_call", "cache_hit": false, "ok": true, "attempt": 1, "ms": 2153, "prompt_chars": 429, "prompt_tokens": 99, "output_tokens": 30}
@@ -800,7 +808,7 @@ For 100 people a day that would equal 100*$0.001163 = $0.1163 a day
 ---
 
 
-## Verdicts and Diagnoses
+**Verdicts and Diagnoses**
 
 <!-- MET or MISSED per criterion against LAST UNIT's target, plus a sentence on
      how you decided.
@@ -832,7 +840,7 @@ All criteria were met, so I don't have anything to diagnose. There was a problem
 
 ---
 
-## The Improvement
+**The Improvement**
 **What I changed: I added logging for the model_wait record from generate.py and made criteria_test.py skip runs with model_wait as well as model_retry.**
 
 **Which failure it was meant to fix: The slow run from criterion six, this will now skip that run and give me ten actual runs to test against.**
@@ -851,17 +859,17 @@ One extra thing, because runs are excluded, Criteria six will not be be tests in
 
 **Did it help, and how do I know: No, it didn't, I know because I ended up missing criterion 6 on the last run, leading to the missed verdict for that criteria.**
 
-## What's Still Broken
+**What's Still Broken**
 
 Criterion 6 is still broken, so the CLI runs are a bit slow for what I want, to fix it I think I would just undo my change, because it worked better as it was before. I stopped because I ran out of time for this assignment.
 
-## What I'd do Next
+**What I'd Do Next**
 
 The next thing I would do is revert the changes made by my fix. I would do this because the code ran better before that point, so I feel the change was for the worse.
 
 I would also maybe change criteria 7 so I don't have to spend 50 minutes per test, 45 of which is waiting.
 
-## How I Used AI
+**How I Used AI**
 **Moment 1**
 
 - *What I asked for: I asked claude to add logging for me and explain as it went what it was doing.*
