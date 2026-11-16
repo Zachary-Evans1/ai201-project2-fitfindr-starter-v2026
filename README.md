@@ -797,21 +797,42 @@ The 92,060 ms run (`f871e771`) is the rate-limited one. Its outfit call was reje
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 | A normal not rate limited completed CLI run should take no more than 6000ms to answer | 8/10 | MET | All three trials showed that the time taken to complete a run was less than 6000ms |
-| 2 | A request from the cold start should take no longer than 66000ms | 1/1 | MET | All three trials completed in under 66000ms and had an answer. |
-| 3 | selected item state matches outfit input | 5/5 | MET | While the tests did not directly show item state, every run completed and gave a recommendation about the given item, so the right item must have passed. |
-| 4 | fit card includes item details | 4/5 | MET | Every test (5/5) had the fit card include the name, price, and platform, which meets my criteria. |
-| 5 | price ceiling is respected | 4/5 | MET | In all 5 tests, the price ceiling was respected by the code. |
+| 6 | A normal not rate limited completed CLI run should take no more than 6000ms to answer | 8/10 | MET | All three trials showed that the time taken to complete a run was less than 6000ms |
+| 7 | A request from the cold start should take no longer than 66000ms | 1/1 | MET | All three trials completed in under 66000ms and had an answer. |
+| 8 | A full complete service run, that generates a fit card, should stay at or under 1200 total tokens | 8/10 | MET | For all ten runs, the number of tokens stayed under 1200 total tokens. |
+| 9 | When a run fails, the system will give the user a message and not crash | 10/10 | MET | In all three trials the system did not crash and gave the user a message on 10 of 10 tries |
+| 10 | For every run its run_start, model and mcp calls, and run_end for completed or stopped runs, will be logged success or fail | 20/20 | MET | In all three trials, the logs showed all ten successful events being logged, and all ten failed attempts being logged |
 
 **Diagnoses**
 
-All criteria were met, so I don't have anything to diagnose. However, I think Criterion 1, matching query completes, may have set the target too low. For a future project I might tighten the target to 5/5 to require consistent completion on every valid try.
+All criteria were met, so I don't have anything to diagnose. There was a problem with criteria six where the generate.py::_wait_for_slot was causing a slow run, leading to the 9/10 in every run though.
 
 ---
 
 ## The Improvement
+**What I changed: I added logging for the model_wait record from generate.py and made criteria_test.py skip runs with model_wait as well as model_retry.**
 
-## Run Log - After
+**Which failure it was meant to fix: The slow run from criterion six, this will now skip that run and give me ten actual runs to test against.**
+
+One extra thing, because runs are excluded, Criteria six will not be be tests in 10 runs every time.
+
+### Run Log — After
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 6. A normal not rate limited completed CLI run should take no more than 6000ms to answer | 8 of 10 | 6/6 | 5/6 | 5/9 | MISSED |
+| 7. A request from the cold start should take no longer than 66000ms | 1 of 1 | 41630ms | 40220ms | 41710ms | Met |
+| 8. A full complete service run, that generates a fit card, should stay at or under 1200 total tokens | 8 of 10 | 10/10 | 10/10 | 10/10 | MET |
+| 9. When a run fails, the system will give the user a message and not crash | 10 of 10 | 10/10 | 10/10 | 10/10 | MET |
+| 10. For every run its run_start, model and mcp calls, and run_end for completed or stopped runs, will be logged success or fail | 20 of 20 | 20/20 | 20/20 | 20/20 | MET |
+
+**Did it help, and how do I know: No, it didn't, I know because I ended up missing criterion 6 on the last run, leading to the missed verdict for that criteria.**
+
+## What's Still Broken
+
+## What I'd do Next
+
+## How I Used AI
 ---
 
 

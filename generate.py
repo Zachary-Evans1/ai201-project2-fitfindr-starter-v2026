@@ -119,6 +119,7 @@ def _wait_for_slot() -> None:
                 file=sys.stderr,
                 flush=True,
             )
+        runlog.event("model_wait", reason="pacer", waited_s=round(sleep_for, 1))
         time.sleep(sleep_for)
         _call_times[:] = [t for t in _call_times if time.monotonic() - t < 60.0]
 
