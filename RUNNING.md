@@ -272,8 +272,13 @@ curl -X POST http://localhost:5000/ask \
 On a host, the start command is:
 
 ```bash
-gunicorn serve:app
+gunicorn serve:app --timeout 120
 ```
+
+The `--timeout 120` matters. gunicorn's default worker timeout is 30 seconds, and
+a model call that runs longer gets the worker killed, which the client sees as a
+bare 500 with no message. With the default, a slow outfit call looked exactly like
+that on the hosted service.
 
 | Thing | What it means |
 |---|---|
@@ -296,7 +301,7 @@ commits first**, or the deploy will run old code.
 |---|---|
 | Runtime | Python |
 | Build command | `pip install -r requirements.txt` |
-| Start command | `gunicorn serve:app` |
+| Start command | `gunicorn serve:app --timeout 120` |
 | Instance type | Free |
 | Environment variable `GEMINI_API_KEY` | Your key. Set it in the Render dashboard only. Never put it in a file in the repo |
 | Environment variable `PYTHON_VERSION` | `3.13.13`. The requirements don't support 3.14, and Render may default to a newer version |
