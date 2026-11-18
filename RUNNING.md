@@ -119,6 +119,12 @@ The same server is deployed at
 The free host goes to sleep when idle. The first request after a quiet period
 can take about a minute.
 
+Invoke-RestMethod -Uri "https://ai201-project2-fitfindr-starter-v2026-hjlm.onrender.com/health"
+
+Invoke-RestMethod -Uri "https://ai201-project2-fitfindr-starter-v2026-hjlm.onrender.com/ask" -Method Post -ContentType "application/json" -Body '{"query": "vintage graphic tee under $30"}'
+
+```
+
 ### Each run is logged
 
 Every run appends records to `logs/run.jsonl`. See **The run log** below for what
