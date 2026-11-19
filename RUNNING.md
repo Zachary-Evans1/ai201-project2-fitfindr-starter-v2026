@@ -115,7 +115,7 @@ Stop the server with Ctrl+C.
 
 The same server is deployed at
 `https://ai201-project2-fitfindr-starter-v2026-hjlm.onrender.com`. Use the same
-`/health` and `/ask` requests with that address in place of `localhost:5000`.
+`/health` and `/ask` requests with that address in place of `http://localhost:5000`.
 The free host goes to sleep when idle. The first request after a quiet period
 can take about a minute.
 
